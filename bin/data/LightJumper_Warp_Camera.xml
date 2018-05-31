@@ -1,0 +1,24 @@
+<Widget>
+    <Kind>11</Kind>
+    <Name>top left</Name>
+    <XValue>0.000000000</XValue>
+    <YValue>0.000000000</YValue>
+</Widget>
+<Widget>
+    <Kind>11</Kind>
+    <Name>top right</Name>
+    <XValue>320.000000000</XValue>
+    <YValue>0.000000000</YValue>
+</Widget>
+<Widget>
+    <Kind>11</Kind>
+    <Name>botom left</Name>
+    <XValue>0.000000000</XValue>
+    <YValue>240.000000000</YValue>
+</Widget>
+<Widget>
+    <Kind>11</Kind>
+    <Name>botom right</Name>
+    <XValue>320.000000000</XValue>
+    <YValue>240.000000000</YValue>
+</Widget>

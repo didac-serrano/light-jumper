@@ -515,14 +515,37 @@ void ofApp::guiEvent(ofxUIEventArgs &e){
 
 void ofApp::setupPeces(){
     int g = 0;
+    int offs = 0;
+    int offs2 = 0;
+    int offsetArray[] = { 10, 11, 12, 19, 20, 21, 28, 29, 30, 14, 15, 16, 23, 24, 25, 32, 33, 34, 46, 47, 48, 55, 56, 57, 64, 65, 66, 50, 51, 52, 59, 60, 61, 68, 69, 70};
+
     // intent d'init de peces
     float dtAux = 0;
     for(int i=0; i<NUM_PECES_TOTAL; i++) {
         pecaEmpty peca;
         peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
         dtAux += 60/float(NUM_PECES_MIN);
+
+        if (i % 4 == 0){
+            offs = 0;
+            offs2 = 8;
+        }
+        else if (i % 3 == 0){
+            offs = 9;
+            offs2 = 17;
+        }
+        else if (i % 2 == 0){
+            offs = 18;
+            offs2 = 26;
+        }
+        else{
+            offs = 27;
+            offs2 = 35;
+        }
+
         do{
-            g = (int)ofRandom(0,NUM_COLS*NUM_ROWS);
+            g = (int)ofRandom(offs, offs2);
+            g = offsetArray[g];
         } while(myGrid.brectGridActiu[g] == false);
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
         peca.estatPeca = CANVIA_ESTAT;

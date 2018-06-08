@@ -26,7 +26,9 @@
 enum pantallesJoc{
     START,
     PLAY,
-    END
+    END,
+    HIGH_SCORES,
+    INSTRUCTIONS
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/

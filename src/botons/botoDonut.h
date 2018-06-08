@@ -12,7 +12,7 @@ public:
     ~botoDonut();
 
     virtual void setup(int _x, int _y, int _radius, ofColor c);
-    virtual void draw();
+    virtual void draw(int r, int g, int b, int xpos, int ypos);
 
     // CARREGA CIRCULAR
     ofPath curvaCarrega;

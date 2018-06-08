@@ -6,5 +6,25 @@
 <Widget>
     <Kind>42</Kind>
     <Name>botoStartY</Name>
-    <Value>389</Value>
+    <Value>540</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoHighScoresX</Name>
+    <Value>181</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoHighScoresY</Name>
+    <Value>200</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoInstructionsX</Name>
+    <Value>570</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoInstructionsY</Name>
+    <Value>200</Value>
 </Widget>

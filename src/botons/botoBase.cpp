@@ -46,7 +46,7 @@ void botoBase::draw(){
 
 void botoBase::drawHelp(){
     ofPushStyle();
-    ofSetColor(255,255,0);
+    ofSetColor(230, 230, 0);
     // radi deteccio boto
     ofNoFill();
     ofCircle(botoX, botoY, botoRadi);
@@ -63,6 +63,7 @@ void botoBase::actualitzaAmt(float _x, float _y){
             botoSeleccionat = true;
         }
     }
+
 }
 
 bool botoBase::isInside(float _x, float _y ){

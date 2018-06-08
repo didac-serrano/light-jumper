@@ -19,12 +19,13 @@ void botoDonut::setup(int _x, int _y, int _radius, ofColor c){
 	curvaCarrega.setColor(c);
 }
 
-void botoDonut::draw(){
+void botoDonut::draw(int r,int g,int b, int xpos, int ypos){
     ofPushStyle();
     // boto
-    ofSetColor(255,200);
+    ofSetColor(r, g, b);
     ofFill();
     ofCircle(botoX, botoY, botoRadi-10);
+    
     // càrrega
     curvaCarrega.arc(botoX,botoY, botoRadi+16,botoRadi+16, -90,amtCarrega360+1-90);
 	curvaCarrega.arcNegative(botoX,botoY, botoRadi+2,botoRadi+2, amtCarrega360+1-90,-90);

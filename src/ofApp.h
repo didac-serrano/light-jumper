@@ -41,12 +41,16 @@ class ofApp : public ofBaseApp{
         void setVariablesIniciPartida(); // endreçat
         void drawPuntuacio();
         void drawEnd();
-
+       // void drawBackground();
+        ofImage fons_inici;
+        ofImage boto_start;
         // CORNER PIN
 		ofxGLWarper warper;
 
         // BOTONS
         botoDonut botoStart;
+        botoDonut botoHighScores;
+        botoDonut botoInstructions;
 
         // GRID
 		grid myGrid;
@@ -77,6 +81,9 @@ class ofApp : public ofBaseApp{
         void setupPeces();
         void updatePeces();
         void drawPeces();
+        void drawStart();
+        void drawHighScores();
+        void drawInstructions();
         void actualitzaPuntsEmpty(int & e);
 
         //--------------------------------------------------------------

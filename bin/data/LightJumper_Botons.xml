@@ -28,3 +28,13 @@
     <Name>botoInstructionsY</Name>
     <Value>200</Value>
 </Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoBackX</Name>
+    <Value>100</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoBackY</Name>
+    <Value>610</Value>
+</Widget>

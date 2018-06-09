@@ -34,7 +34,7 @@ class ofApp : public ofBaseApp{
 
         // APP
         Singleton *singleton; // PUNTUACIÓ jugador
-
+        string all_scores = "";
         pantallesJoc pantallaJoc;
         string pantallaToString();
 
@@ -44,6 +44,7 @@ class ofApp : public ofBaseApp{
        // void drawBackground();
         ofImage fons_inici;
         ofImage boto_start;
+        ofImage fons_scores;
         // CORNER PIN
 		ofxGLWarper warper;
 
@@ -51,6 +52,7 @@ class ofApp : public ofBaseApp{
         botoDonut botoStart;
         botoDonut botoHighScores;
         botoDonut botoInstructions;
+        botoDonut botoBack;
 
         // GRID
 		grid myGrid;
@@ -85,7 +87,8 @@ class ofApp : public ofBaseApp{
         void drawHighScores();
         void drawInstructions();
         void actualitzaPuntsEmpty(int & e);
-
+        void drawScoreList();
+        void drawBack();
         //--------------------------------------------------------------
         // DETECCIÓ
         float relAspectWidth; // detecció

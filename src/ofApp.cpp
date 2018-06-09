@@ -3,7 +3,10 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+
     fons_inici.loadImage("start-background.jpg");
+    fons_scores.loadImage("score-background.jpg");
+
     // APP
     //ofSetFullscreen(true);
     //ofHideCursor();
@@ -62,10 +65,15 @@ void ofApp::setup(){
     guib->addIntSlider("botoInstructionsX", 0, APP_WIDTH, &botoInstructions.botoX)->setIncrement(1);
     guib->addIntSlider("botoInstructionsY", 0, APP_HEIGT, &botoInstructions.botoY)->setIncrement(1);
 
+    //Boto Instructions
+    guib->addIntSlider("botoBackX", 0, APP_WIDTH, &botoBack.botoX)->setIncrement(1);
+    guib->addIntSlider("botoBackY", 0, APP_HEIGT, &botoBack.botoY)->setIncrement(1);
+
     //Setup
-    botoStart.setup(botoStart.botoX, botoStart.botoY, 125, saltingBlue);
-    botoHighScores.setup(botoHighScores.botoX, botoHighScores.botoY, 80, saltingBlue);
-    botoInstructions.setup(botoInstructions.botoX, botoInstructions.botoY, 80, saltingBlue);
+    botoStart.setup(botoStart.botoX, botoStart.botoY, 75, ofColor(204, 204, 0));
+    botoHighScores.setup(botoHighScores.botoX, botoHighScores.botoY, 60, ofColor(204, 204, 0));
+    botoInstructions.setup(botoInstructions.botoX, botoInstructions.botoY, 60, ofColor(204, 204, 0));
+    botoBack.setup(botoBack.botoX, botoBack.botoY, 55, ofColor(204, 204, 0));
 
 
     guib->autoSizeToFitWidgets();
@@ -215,6 +223,8 @@ void ofApp::setVariablesIniciPartida(){
     botoStart.botoSeleccionat = false;
     botoHighScores.botoSeleccionat = false;
     botoInstructions.botoSeleccionat = false;
+    botoBack.botoSeleccionat = false;
+
 
     // TEMPS DE JOC
     jocMinutsTimer.reset();
@@ -226,7 +236,6 @@ void ofApp::setVariablesIniciPartida(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
     // DETECCIÓ I CAMERA --------------------------------------------------------------------
     vidGrabber.update();
     bool bframeNew = vidGrabber.isFrameNew();
@@ -257,6 +266,7 @@ void ofApp::update(){
     // PANTALLES ------------------------------------------------------------------------
     if(pantallaJoc == START){
 
+
         //drawBackground();
         botoStart.update(totalBlobsDetected, posicionsBlobs);
         botoStart.updatem(warpMousePos);
@@ -281,10 +291,6 @@ void ofApp::update(){
             ofFill();
             ofRect(0,0, APP_WIDTH, APP_HEIGT);
             // to do: SHOW INSTRUCTIONS!!!!!!!!!!!!
-
-
-            //setupPeca1(); // la única peça d'aquest joc
-            setupPeces();
         }
 
 
@@ -295,12 +301,10 @@ void ofApp::update(){
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
             pantallaJoc = HIGH_SCORES;
 
-
-            //to do: SHOW HIGH SCORES!!!!!!!!!!!!!!!!
-
-
-            //setupPeca1(); // la única peça d'aquest joc
-            setupPeces();
+            ifstream t("scores.txt");
+            stringstream buffer;
+            buffer << t.rdbuf();
+            all_scores = buffer.str();
         }
     }
     else if(pantallaJoc == PLAY){
@@ -313,9 +317,40 @@ void ofApp::update(){
     }
     else if(pantallaJoc == END){
         if(duradaTheEndTimer.isTimerFinished()){
+            // HERE WE STORE THE DATA ON
+
+            ifstream f("scores.txt");
+            if(f.good()){
+
+            ofstream log("scores.txt", std::ios_base::app | std::ios_base::out);
+            log << "N - " + ofToString(singleton->getPuntuacioJugador()) + " Points\n";
+            log.close();
+
+            }
+
+            else{
+
+            ofstream outfile ("scores.txt");
+            outfile << "Score: " << singleton->getPuntuacioJugador() << endl;
+            outfile.close();
+            }
+
+
             setVariablesIniciPartida();
             pantallaJoc = START;
         }
+    }
+
+    else if(pantallaJoc == HIGH_SCORES){
+        //HSCORES BUTTON
+        botoBack.update(totalBlobsDetected, posicionsBlobs);
+        botoBack.updatem(warpMousePos);
+        
+        if (botoBack.botoSeleccionat == true)
+        {
+            pantallaJoc = START;
+        }
+
     }
 
     // TEMPS ------------------------------------------------------------------------
@@ -336,6 +371,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     // WARP begin
+        cout<<"pantallaJOC: " << pantallaJoc<<endl;
+
     warper.begin();
     warper.draw();
 
@@ -350,13 +387,13 @@ void ofApp::draw(){
 
 
         fons_inici.draw(0,0, APP_WIDTH, APP_HEIGT);
-        drawTemps();
+//        drawTemps();
         drawStart();
         drawHighScores();
         drawInstructions();
-        botoStart.draw(255,255,255, 0, 0);
-        botoInstructions.draw(255,250,255, 0, 0);
-        botoHighScores.draw(255,250,255, 0, 0);
+        botoStart.draw(153, 115, 0, 0, 0);
+        botoInstructions.draw(153, 115, 0, 0, 0);
+        botoHighScores.draw(153, 115, 0, 0, 0);
 
 
     }
@@ -367,17 +404,23 @@ void ofApp::draw(){
         ofFill();
         ofRect(0,0, APP_WIDTH, APP_HEIGT);
         drawTemps();
-        drawPuntuacio();
         //peca1.draw();
         drawPeces();
+        drawPuntuacio();
     }
     else if(pantallaJoc == END){
         drawEnd();
     }
 
     else if(pantallaJoc == HIGH_SCORES){
-        cout<<"HIGHSCORES"<<endl;
-        //LEFTTTTTTTTTTTTTT
+        //FONS
+        fons_scores.draw(0,0, APP_WIDTH, APP_HEIGT);
+
+        //
+        drawBack();
+        drawScoreList();
+        botoBack.draw(255,255,255, 0, 0);
+        //LEFT
     }
 
       else if(pantallaJoc == INSTRUCTIONS){
@@ -681,6 +724,8 @@ string ofApp::pantallaToString(){
     else if(pantallaJoc == END){
         return "END";
     }
+    else if(pantallaJoc == HIGH_SCORES)
+        return "HIGH_SCORES";
     else{
         return "NO SE";
     }
@@ -732,6 +777,29 @@ void ofApp::drawStart(){
     saltingTypo.drawString(strt,0,0);
     ofPopMatrix();
 }
+
+void ofApp::drawScoreList(){
+    ofRectangle start;
+    start = saltingTypo.getStringBoundingBox(all_scores,0,0);
+    ofPushMatrix();
+    ofTranslate(APP_WIDTH_MEITAT-start.width*0.5 + 10,60);
+    ofSetColor(ofColor(115, 38, 115));
+
+    saltingTypo.drawString(all_scores,0,0);
+    ofPopMatrix();
+}
+
+void ofApp::drawBack(){
+    ofRectangle start;
+    start = saltingTypo.getStringBoundingBox("Back",0,0);
+    ofPushMatrix();
+    ofTranslate(70,500);
+    ofSetColor(saltingBlue);
+    saltingTypo.drawString("Back",0,0);
+    ofPopMatrix();
+}
+
+
 void ofApp::drawInstructions(){
     string instr = "Instructions";
     ofRectangle instructions;

@@ -19,7 +19,9 @@
 enum pantallesJoc{
     START,
     PLAY,
-    END
+    END,
+    HIGH_SCORES,
+    INSTRUCTIONS
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/
@@ -41,5 +43,7 @@ inline pantallesJoc& operator--(pantallesJoc& eDOW, int){
 	}
 	return eDOW;
 }
+
+
 
 #endif

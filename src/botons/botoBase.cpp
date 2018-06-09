@@ -46,7 +46,7 @@ void botoBase::draw(){
 
 void botoBase::drawHelp(){
     ofPushStyle();
-    ofSetColor(230, 230, 0);
+    ofSetColor(204, 204, 0);
     // radi deteccio boto
     ofNoFill();
     ofCircle(botoX, botoY, botoRadi);

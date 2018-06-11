@@ -304,7 +304,7 @@ void ofApp::update(){
         botoHighScores.updatem(warpMousePos);
 
 
-
+        cout<<"AQUI ESTEM ABANS D'ENTRAR A LA PANTALLA DE HSCORES: botoSeleccionat" << botoHighScores.botoSeleccionat<<endl;
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
             pantallaJoc = HIGH_SCORES;
 
@@ -312,6 +312,7 @@ void ofApp::update(){
             stringstream buffer;
             buffer << t.rdbuf();
             all_scores = buffer.str();
+            botoHighScores.botoSeleccionat =false;
         }
     }
     else if(pantallaJoc == PLAY){
@@ -357,6 +358,7 @@ void ofApp::update(){
         if (botoBack.botoSeleccionat == true)
         {
             pantallaJoc = START;
+            botoBack.botoSeleccionat =false;
         }
 
     }

@@ -146,6 +146,6 @@ class ofApp : public ofBaseApp{
 
         //--------------------------------------------------------------
         // HELP INFO
-        void toogleDrawInfoGrid();
+        void toogleDrawInfo Grid();
 
 };

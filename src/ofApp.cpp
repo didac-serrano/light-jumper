@@ -11,12 +11,16 @@ void ofApp::setup(){
     //ofSetFullscreen(true);
     //ofHideCursor();
     ofSetFrameRate(60);
-
+    revisat = false;
     // GENRAL
     ofSetVerticalSync(true);
     ofSetCircleResolution(300);
     ofTrueTypeFont::setGlobalDpi(72);
     singleton = Singleton::getInstance();
+
+    // MUSIC
+    soundPlayer.loadSound("Lips Are Movin.mp3");
+    setupMusic("lipsAreMovinLevel");
 
     // TEMPS DE JOC
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
@@ -39,9 +43,9 @@ void ofApp::setup(){
     saltingBlue = ofColor(0,0,255);
 
     // TYPO
-	ofTrueTypeFont::setGlobalDpi(72);
-	saltingTypo.loadFont("Oswald-Bold.otf", 27, true, true); // temps nivell i normal, kids, pro
-	saltingTypo.setLetterSpacing(1.2);
+	ofTrueTypeFont::setGlobalDpi(115);
+	saltingTypo.loadFont("GlametrixBold.otf", 27, true, true); // temps nivell i normal, kids, pro
+	saltingTypo.setLetterSpacing(1);
 
     // PECES
     comptadorPeces = 0;
@@ -65,7 +69,7 @@ void ofApp::setup(){
     guib->addIntSlider("botoInstructionsX", 0, APP_WIDTH, &botoInstructions.botoX)->setIncrement(1);
     guib->addIntSlider("botoInstructionsY", 0, APP_HEIGT, &botoInstructions.botoY)->setIncrement(1);
 
-    //Boto Instructions
+    //Boto Back
     guib->addIntSlider("botoBackX", 0, APP_WIDTH, &botoBack.botoX)->setIncrement(1);
     guib->addIntSlider("botoBackY", 0, APP_HEIGT, &botoBack.botoY)->setIncrement(1);
 
@@ -266,7 +270,6 @@ void ofApp::update(){
     // PANTALLES ------------------------------------------------------------------------
     if(pantallaJoc == START){
 
-
         //drawBackground();
         botoStart.update(totalBlobsDetected, posicionsBlobs);
         botoStart.updatem(warpMousePos);
@@ -283,6 +286,7 @@ void ofApp::update(){
         botoInstructions.update(totalBlobsDetected, posicionsBlobs);
         botoInstructions.updatem(warpMousePos);
 
+
         if(botoInstructions.botoSeleccionat == true){ // CANVI A pantallaJoc = INSTRUCTIONS;
             pantallaJoc = INSTRUCTIONS;
 
@@ -294,9 +298,12 @@ void ofApp::update(){
         }
 
 
+
         //HIGH SCORES BUTTON
         botoHighScores.update(totalBlobsDetected, posicionsBlobs);
         botoHighScores.updatem(warpMousePos);
+
+
 
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
             pantallaJoc = HIGH_SCORES;
@@ -342,10 +349,11 @@ void ofApp::update(){
     }
 
     else if(pantallaJoc == HIGH_SCORES){
+
         //HSCORES BUTTON
         botoBack.update(totalBlobsDetected, posicionsBlobs);
         botoBack.updatem(warpMousePos);
-        
+
         if (botoBack.botoSeleccionat == true)
         {
             pantallaJoc = START;
@@ -424,7 +432,7 @@ void ofApp::draw(){
     }
 
       else if(pantallaJoc == INSTRUCTIONS){
-        cout<<"HIGHSCORES"<<endl;
+        cout<<"INSTRUCTIONS"<<endl;
         //RIGHTTTTTTTTTTTTT
     }
 
@@ -532,6 +540,19 @@ void ofApp::keyPressed(int key){
     else if((key == 'i')||(key == 'I')){
         toogleDrawInfoGrid();
     }
+    else if(key == ' ' && soundPlayer.getIsPlaying()) {
+        stringstream ss;
+        ss << soundPlayer.getPositionMS();
+        ss << "\n";
+        gameLevel.append(ss.str());
+        cout << ss.str();
+    }
+    else if(key == 's') {
+        ofstream myfile;
+        myfile.open("newLevel.txt");
+        myfile << gameLevel;
+        myfile.close();
+     }
     else if((key == 'b')||(key == 'B')){
         guia->setVisible(false);
         guiw->setVisible(false);
@@ -724,11 +745,28 @@ string ofApp::pantallaToString(){
     else if(pantallaJoc == END){
         return "END";
     }
-    else if(pantallaJoc == HIGH_SCORES)
-        return "HIGH_SCORES";
+  /*  else if(pantallaJoc == HIGH_SCORES)
+        return "HIGH_SCORES";*/
     else{
         return "NO SE";
     }
+}
+
+void ofApp::setupMusic(string filename) {
+    ifstream levelFile;
+    int positionMs;
+    levelFile.open("lipsAreMovinLevel.txt");
+    if (!levelFile) {
+        cout << "Unable to open song level file :(";
+        std::exit(1); // terminate with error
+    }
+
+    while (levelFile >> positionMs) {
+        songPeaks.push_back(positionMs);
+    }
+    cout << "done reading level!";
+    cout << songPeaks.size();
+    levelFile.close();
 }
 
 //--------------------------------------------------------------

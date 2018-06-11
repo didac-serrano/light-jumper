@@ -14,14 +14,14 @@
 
 #define MAX_NUM_BLOBS                   10 // DETECCIÓ
 
-#define NUM_PANTALLES                   2 // JOC
+#define NUM_PANTALLES                   5 // JOC
 
 enum pantallesJoc{
     START,
     PLAY,
-    END,
+    END,   
+    INSTRUCTIONS,
     HIGH_SCORES,
-    INSTRUCTIONS
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/

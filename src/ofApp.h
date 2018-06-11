@@ -68,7 +68,7 @@ class ofApp : public ofBaseApp{
 
 		// TEMPS DE PANTALLA FINAL
 		ofxTimer duradaTheEndTimer;
-
+        bool revisat;
         //--------------------------------------------------------------
         // PUNTER
         ofImage punter;
@@ -148,4 +148,9 @@ class ofApp : public ofBaseApp{
         // HELP INFO
         void toogleDrawInfoGrid();
 
+        // MUSIC PLAYER
+        ofSoundPlayer soundPlayer;
+        vector<int> songPeaks;
+        void setupMusic(string filename);
+        string gameLevel = "";
 };

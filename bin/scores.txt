@@ -6,3 +6,6 @@ N - 231 Points
 N - 8 Points
 N - 53 Points
 N - 123 Points
+N - 79 Points
+N - 80 Points
+N - 51 Points

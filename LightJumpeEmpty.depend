@@ -15715,3 +15715,69 @@
 1528710022 source:c:\users\jordan\desktop\more\apps\myapps\lightjumper\src\botons\botobase.cpp
 	"botoBase.h"
 
+1527736878 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\icon.rc
+
+1528726030 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\botons\botobase.cpp
+	"botoBase.h"
+
+1527736878 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\botons\botobase.h
+	"ofMain.h"
+	"LIGHT_JUMPER_DEFINES.h"
+
+1528822542 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\light_jumper_defines.h
+
+1528726030 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\botons\botodonut.cpp
+	"botoDonut.h"
+
+1528726030 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\botons\botodonut.h
+	"botoBase.h"
+
+1527736878 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\grid\grid.cpp
+	"grid.h"
+
+1527736878 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\grid\grid.h
+	"ofMain.h"
+	"LIGHT_JUMPER_DEFINES.h"
+
+1527736878 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\main.cpp
+	"ofMain.h"
+	"ofApp.h"
+
+1528820207 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\ofapp.h
+	"ofMain.h"
+	"ofxGLWarper.h"
+	"ofxOpenCv.h"
+	"ofxUI.h"
+	"ofxXmlSettings.h"
+	"ofxTimer.h"
+	"LIGHT_JUMPER_DEFINES.h"
+	"Singleton.h"
+	"grid/grid.h"
+	"botons/botoDonut.h"
+	"peces/pecaEmpty.h"
+
+1527736878 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\singleton.h
+	<iostream>
+
+1527736878 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\peces\pecaempty.h
+	"ofMain.h"
+	"DEFINES.h"
+	"pecaBase.h"
+
+1527736878 c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\peces\pecabase.h
+	"ofMain.h"
+	"LIGHT_JUMPER_DEFINES.h"
+
+1527736878 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\peces\pecabase.cpp
+	"pecaBase.h"
+
+1527736878 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\peces\pecaempty.cpp
+	"pecaEmpty.h"
+
+1527736878 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\singleton.cpp
+	<stdio.h>
+	"Singleton.h"
+
+1528821730 source:c:\program files (x86)\openframework\of_v0.8.4_win_cb_release\apps\myapps\lightjumper\src\ofapp.cpp
+	"ofApp.h"
+

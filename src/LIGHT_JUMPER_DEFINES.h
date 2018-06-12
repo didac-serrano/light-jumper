@@ -14,7 +14,7 @@
 
 #define MAX_NUM_BLOBS                   10 // DETECCIÓ
 
-#define MAX_GAME_TIME                   2 // JOC
+#define MAX_GAME_TIME                   0.5 // JOC
 #define NUM_PANTALLES                   2
 #define NUM_PECES_MIN                   180
 #define NUM_PECES_TOTAL                 (MAX_GAME_TIME * NUM_PECES_MIN) - 10
@@ -28,7 +28,10 @@ enum pantallesJoc{
     PLAY,
     END,
     HIGH_SCORES,
-    INSTRUCTIONS
+    INSTRUCTIONS,
+    TUTORIAL_1,
+    TUTORIAL_2,
+    TUTORIAL_3
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/

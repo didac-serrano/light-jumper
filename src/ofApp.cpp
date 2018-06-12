@@ -269,81 +269,55 @@ void ofApp::update(){
 
     // PANTALLES ------------------------------------------------------------------------
     if(pantallaJoc == START){
-
-        //drawBackground();
+        //update buttons
         botoStart.update(totalBlobsDetected, posicionsBlobs);
         botoStart.updatem(warpMousePos);
+        botoInstructions.update(totalBlobsDetected, posicionsBlobs);
+        botoInstructions.updatem(warpMousePos);
+        botoHighScores.update(totalBlobsDetected, posicionsBlobs);
+        botoHighScores.updatem(warpMousePos);
 
         if(botoStart.botoSeleccionat == true){ // CANVI A pantallaJoc = PLAY;
             pantallaJoc = PLAY;
             jocMinutsTimer.startTimer();
-
-            //setupPeca1(); // la única peça d'aquest joc
             setupPeces();
         }
 
-        //INSTRUCTIONS BUTTON
-        botoInstructions.update(totalBlobsDetected, posicionsBlobs);
-        botoInstructions.updatem(warpMousePos);
-
-
         if(botoInstructions.botoSeleccionat == true){ // CANVI A pantallaJoc = INSTRUCTIONS;
             pantallaJoc = INSTRUCTIONS;
-
-               // FONS
-            ofSetColor(55);
-            ofFill();
-            ofRect(0,0, APP_WIDTH, APP_HEIGT);
-            // to do: SHOW INSTRUCTIONS!!!!!!!!!!!!
+            //cout<<"inside_insts"<<endl;
         }
 
-
-
-        //HIGH SCORES BUTTON
-        botoHighScores.update(totalBlobsDetected, posicionsBlobs);
-        botoHighScores.updatem(warpMousePos);
-
-
-        cout<<"AQUI ESTEM ABANS D'ENTRAR A LA PANTALLA DE HSCORES: botoSeleccionat" << botoHighScores.botoSeleccionat<<endl;
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
             pantallaJoc = HIGH_SCORES;
-
             ifstream t("scores.txt");
             stringstream buffer;
             buffer << t.rdbuf();
             all_scores = buffer.str();
-            botoHighScores.botoSeleccionat =false;
+            botoHighScores.botoSeleccionat = false;
         }
     }
+
     else if(pantallaJoc == PLAY){
-        //peca1.updatem(warpMousePos);
-        //peca1.update(totalBlobsDetected, posicionsBlobs);
-        //comprobarEstatsPecesEmpty()
         updatePeces();
         //cout<<jocMinutsTimer.getTime()<<endl;
-
     }
+
     else if(pantallaJoc == END){
         if(duradaTheEndTimer.isTimerFinished()){
             // HERE WE STORE THE DATA ON
-
             ifstream f("scores.txt");
             if(f.good()){
-
-            ofstream log("scores.txt", std::ios_base::app | std::ios_base::out);
-            log << "N - " + ofToString(singleton->getPuntuacioJugador()) + " Points\n";
-            log.close();
-
+                ofstream log("scores.txt", std::ios_base::app | std::ios_base::out);
+                log << "N - " + ofToString(singleton->getPuntuacioJugador()) + " Points" << endl;
+                log.close();
             }
 
             else{
-
-            ofstream outfile ("scores.txt");
-            outfile << "Score: " << singleton->getPuntuacioJugador() << endl;
-            outfile.close();
+                ofstream outfile ("scores.txt");
+                outfile << "Score: " << singleton->getPuntuacioJugador() << endl;
+                outfile.close();
             }
-
-
             setVariablesIniciPartida();
             pantallaJoc = START;
         }
@@ -381,7 +355,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     // WARP begin
-        cout<<"pantallaJOC: " << pantallaJoc<<endl;
+    //cout<<"pantallaJOC: " << pantallaJoc<<endl;
 
     warper.begin();
     warper.draw();
@@ -391,24 +365,19 @@ void ofApp::draw(){
     ofSetColor(255);
     ofSetWindowTitle("Light Jumper running at " + ofToString((int)ofGetFrameRate()) + " frames per second");
 
-
     // PANTALLES --------------------------------------------------------------------------
     if(pantallaJoc == START){
-
-
         fons_inici.draw(0,0, APP_WIDTH, APP_HEIGT);
-//        drawTemps();
+//      drawTemps();
         drawStart();
         drawHighScores();
         drawInstructions();
         botoStart.draw(153, 115, 0, 0, 0);
         botoInstructions.draw(153, 115, 0, 0, 0);
         botoHighScores.draw(153, 115, 0, 0, 0);
-
-
     }
-    else if(pantallaJoc == PLAY){
 
+    else if(pantallaJoc == PLAY){
         // FONS
         ofSetColor(102, 102, 255);
         ofFill();
@@ -418,6 +387,7 @@ void ofApp::draw(){
         drawPeces();
         drawPuntuacio();
     }
+
     else if(pantallaJoc == END){
         drawEnd();
     }
@@ -433,8 +403,7 @@ void ofApp::draw(){
         //LEFT
     }
 
-      else if(pantallaJoc == INSTRUCTIONS){
-        cout<<"INSTRUCTIONS"<<endl;
+    else if(pantallaJoc == INSTRUCTIONS){
         //RIGHTTTTTTTTTTTTT
     }
 
@@ -656,7 +625,8 @@ void ofApp::setupPeces(){
     int g = 0;
     int offs = 0;
     int offs2 = 0;
-    int offsetArray[] = { 10, 11, 12, 19, 20, 21, 28, 29, 30, 14, 15, 16, 23, 24, 25, 32, 33, 34, 46, 47, 48, 55, 56, 57, 64, 65, 66, 50, 51, 52, 59, 60, 61, 68, 69, 70};
+    int offsetArray[] = { 10, 11, 12, 19, 20, 21, 28, 29, 30, 14, 15, 16, 23, 24, 25,
+    32, 33, 34, 46, 47, 48, 55, 56, 57, 64, 65, 66, 50, 51, 52, 59, 60, 61, 68, 69, 70};
 
     // intent d'init de peces
     float dtAux = 0;
@@ -664,7 +634,6 @@ void ofApp::setupPeces(){
         pecaEmpty peca;
         peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
         dtAux += 60/float(NUM_PECES_MIN);
-
         if (i % 4 == 0){
             offs = 0;
             offs2 = 8;
@@ -841,7 +810,7 @@ void ofApp::drawBack(){
 
 
 void ofApp::drawInstructions(){
-    string instr = "Instructions";
+    string instr = "Tutorial";
     ofRectangle instructions;
     instructions = saltingTypo.getStringBoundingBox(instr,0,0);
     ofPushMatrix();
@@ -851,7 +820,7 @@ void ofApp::drawInstructions(){
     ofPopMatrix();
 }
 void ofApp::drawHighScores(){
-    string hs = "High Scores";
+    string hs = "Scores";
     ofRectangle hscores;
     hscores = saltingTypo.getStringBoundingBox(hs,0,0);
     ofPushMatrix();

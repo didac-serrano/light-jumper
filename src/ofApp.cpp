@@ -18,6 +18,10 @@ void ofApp::setup(){
     ofTrueTypeFont::setGlobalDpi(72);
     singleton = Singleton::getInstance();
 
+    // MUSIC
+    soundPlayer.loadSound("Lips Are Movin.mp3");
+    setupMusic("lipsAreMovinLevel");
+
     // TEMPS DE JOC
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
@@ -345,7 +349,7 @@ void ofApp::update(){
         //HSCORES BUTTON
         botoBack.update(totalBlobsDetected, posicionsBlobs);
         botoBack.updatem(warpMousePos);
-        
+
         if (botoBack.botoSeleccionat == true)
         {
             pantallaJoc = START;
@@ -532,6 +536,19 @@ void ofApp::keyPressed(int key){
     else if((key == 'i')||(key == 'I')){
         toogleDrawInfoGrid();
     }
+    else if(key == ' ' && soundPlayer.getIsPlaying()) {
+        stringstream ss;
+        ss << soundPlayer.getPositionMS();
+        ss << "\n";
+        gameLevel.append(ss.str());
+        cout << ss.str();
+    }
+    else if(key == 's') {
+        ofstream myfile;
+        myfile.open("newLevel.txt");
+        myfile << gameLevel;
+        myfile.close();
+     }
     else if((key == 'b')||(key == 'B')){
         guia->setVisible(false);
         guiw->setVisible(false);
@@ -729,6 +746,23 @@ string ofApp::pantallaToString(){
     else{
         return "NO SE";
     }
+}
+
+void ofApp::setupMusic(string filename) {
+    ifstream levelFile;
+    int positionMs;
+    levelFile.open("lipsAreMovinLevel.txt");
+    if (!levelFile) {
+        cout << "Unable to open song level file :(";
+        std::exit(1); // terminate with error
+    }
+
+    while (levelFile >> positionMs) {
+        songPeaks.push_back(positionMs);
+    }
+    cout << "done reading level!";
+    cout << songPeaks.size();
+    levelFile.close();
 }
 
 //--------------------------------------------------------------

@@ -146,6 +146,11 @@ class ofApp : public ofBaseApp{
 
         //--------------------------------------------------------------
         // HELP INFO
-        void toogleDrawInfo Grid();
+        void toogleDrawInfoGrid();
 
+        // MUSIC PLAYER
+        ofSoundPlayer soundPlayer;
+        vector<int> songPeaks;
+        void setupMusic(string filename);
+        string gameLevel = "";
 };

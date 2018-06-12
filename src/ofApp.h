@@ -13,7 +13,7 @@
 #include "grid/grid.h"
 #include "botons/botoDonut.h"
 #include "peces/pecaEmpty.h"
-#include <string>  
+#include <string>
 
 class ofApp : public ofBaseApp{
 
@@ -32,7 +32,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-        void setupTutorial();
+        void setupTutorial1();
         void updatePecesTut1();
 
         // APP
@@ -63,6 +63,7 @@ class ofApp : public ofBaseApp{
 
         // TEMPS DE JOC
         ofxTimer jocMinutsTimer;
+        ofxTimer Tuto1Timer;
         float jocMinutsTimerSegonsLeft;
         int jocMinutsTimerMinuts;
         int jocMinutsTimerSegons;

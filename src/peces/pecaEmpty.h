@@ -5,7 +5,6 @@
 
 #include "ofMain.h"
 
-#include "LIGHT_JUMPER_DEFINES.h"
 #include "pecaBase.h"
 
 class pecaEmpty : public pecaBase{
@@ -17,7 +16,7 @@ public:
 
     virtual void setup(int _id, int _numgrid, ofVec2f _pos, int _radi, float _distT);
     void init(int id, int numgrid, ofVec2f pos);
-    virtual void update(int _total, ofVec2f _pos[MAX_NUM_BLOBS], int input_num);
+    virtual void update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]);
     virtual void draw();
 
     int alfaPeca;

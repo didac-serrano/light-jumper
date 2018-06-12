@@ -24,6 +24,10 @@ void ofApp::setup(){
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
 
+    Tuto1Timer.setup(18000, false); // 3 minuts = 3*60*1000 ms
+    Tuto1Timer.stopTimer();
+
+
     duradaTheEndTimer.setup(5*1000, false); // 5 segons
     duradaTheEndTimer.stopTimer();
 
@@ -228,9 +232,6 @@ void ofApp::setup(){
 void ofApp::setVariablesIniciPartida(){
     // APP
     singleton->setPuntuacioJugador(0);
-    singleton->setPuntuacioJugador_tut1(0);
-
-
 
     // BOTONS
     botoStart.botoSeleccionat = false;
@@ -239,14 +240,15 @@ void ofApp::setVariablesIniciPartida(){
     botoBack.botoSeleccionat = false;
     botoReturn.botoSeleccionat = false;
 
-
-
     // TEMPS DE JOC
     jocMinutsTimer.reset();
     jocMinutsTimer.stopTimer();
+
+    Tuto1Timer.reset();
+    Tuto1Timer.stopTimer();
+
     duradaTheEndTimer.reset();
     duradaTheEndTimer.stopTimer();
-
 }
 
 //--------------------------------------------------------------
@@ -296,13 +298,9 @@ void ofApp::update(){
 
         if(botoInstructions.botoSeleccionat == true){ // CANVI A pantallaJoc = TUTORIAL_1;
             pantallaJoc = TUTORIAL_1;
+            Tuto1Timer.startTimer();
             botoInstructions.botoSeleccionat = false;
-            setupTutorial();
-            if(singleton->getPuntuacioJugador_tut1() == 3)
-            {
-                pantallaJoc == START;
-                pecesPantalla.clear();
-            }
+            setupTutorial1();
         }
 
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
@@ -317,7 +315,29 @@ void ofApp::update(){
 
     else if(pantallaJoc == PLAY){
         updatePeces();
-        //cout<<jocMinutsTimer.getTime()<<endl;
+    }
+
+    else if(pantallaJoc == TUTORIAL_1){
+        //HSCORES BUTTON
+        updatePecesTut1();
+        botoReturn.update(totalBlobsDetected, posicionsBlobs);
+        botoReturn.updatem(warpMousePos);
+        //refactor needed
+        if (singleton->getPuntuacioJugador()==5 || Tuto1Timer.isTimerFinished()) {
+            duradaTheEndTimer.startTimer();
+            Tuto1Timer.reset();
+            Tuto1Timer.stopTimer();
+        }
+        if (botoReturn.botoSeleccionat == true || duradaTheEndTimer.isTimerFinished())
+        {
+            pantallaJoc = START;
+            botoReturn.botoSeleccionat = false;
+            singleton->setPuntuacioJugador(0);
+            duradaTheEndTimer.reset();
+            duradaTheEndTimer.stopTimer();
+            pecesTut.clear();
+            pecesPantalla.clear();
+        }
     }
 
     else if(pantallaJoc == END){
@@ -352,21 +372,6 @@ void ofApp::update(){
             botoBack.botoSeleccionat =false;
         }
     }
-
-    else if(pantallaJoc == TUTORIAL_1){
-
-        //HSCORES BUTTON
-        updatePecesTut1();
-        botoReturn.update(totalBlobsDetected, posicionsBlobs);
-        botoReturn.updatem(warpMousePos);
-
-        if (botoReturn.botoSeleccionat == true)
-        {
-            pantallaJoc = START;
-            botoReturn.botoSeleccionat =false;
-        }
-    }
-
 
     // TEMPS ------------------------------------------------------------------------
     jocMinutsTimerSegonsLeft = jocMinutsTimer.getTimeLeftInSeconds();
@@ -703,15 +708,17 @@ void ofApp::setupPeces(){
     }
 }
 
-void ofApp::setupTutorial(){
+void ofApp::setupTutorial1(){
     //Fase 1 <idle dots>
     int g = 0;
-    float dtAux = 0;
-    for(int i=0; i<2; i++) {
+    float dtAux = 3;
+    int offsetArray[] = {10, 25, 66, 52, 21};
+    for(int i=0; i<5; i++) {
         pecaEmpty peca;
         peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
-        dtAux += 2;
-        g = (2*i)+3;
+        dtAux += 3;
+        g = offsetArray[i];
+        cout<<dtAux<<endl;
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
         peca.estatPeca = CANVIA_ESTAT;
         peca.estatPecaNext = APAREIX;
@@ -720,12 +727,11 @@ void ofApp::setupTutorial(){
         peca.tocadaTimer = TOCADA_TIMER_PECA;
         pecesTut.push_back(peca);
     }
-    g = 0;
-    dtAux = 0;
 
     //Fase 2 <idle points>
 
     //fase 3 <moving dots>
+    /*
     for(int i=0; i<2; i++) {
         pecaEmpty peca;
         peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
@@ -738,7 +744,7 @@ void ofApp::setupTutorial(){
         peca.idleTimer = IDLE_TIMER_PECA;
         peca.tocadaTimer = TOCADA_TIMER_PECA;
         pecesMovTut.push_back(peca);
-    }
+    }*/
 }
 
 
@@ -753,15 +759,31 @@ void ofApp::updatePeces(){
             it = peces.erase(it);
         }
         else it++;
-        //it++;
-        //comprobarEstatsPecesEmpty();
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs,0);
-        //comprobarEstatsPecesEmpty();
+        it->update(totalBlobsDetected, posicionsBlobs);
     }
 
+}
+
+void ofApp::updatePecesTut1()
+{
+    pecaEmpty aux;
+    vector<pecaEmpty>::iterator it;
+    for(it = pecesTut.begin(); it != pecesTut.end(); ) {
+        if(it->distanceInTime<=Tuto1Timer.getTime()) {
+            aux = (*it);
+            aux.bpecaActiva = true;
+            pecesPantalla.push_back(aux);
+            it = pecesTut.erase(it);
+        }
+        else it++;
+    }
+    for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
+        it->updatem(warpMousePos);
+        it->update(totalBlobsDetected, posicionsBlobs);
+    }
 }
 
 void ofApp::drawPeces() {
@@ -823,7 +845,6 @@ void ofApp::actualitzaPuntsEmpty(int & e){
     singleton->setPuntuacioJugador(singleton->getPuntuacioJugador() + e);
 }
 
-
 //--------------------------------------------------------------
 void ofApp::drawTemps(){
     string s = ofToString(jocMinutsTimerMinuts,2,'0') + ":" + ofToString(jocMinutsTimerSegons,2,'0');
@@ -875,28 +896,6 @@ void ofApp::drawScoreList(){
     ofPopMatrix();
 }
 
-void ofApp::updatePecesTut1()
-{
-    pecaEmpty aux;
-    vector<pecaEmpty>::iterator it;
-    for(it = pecesTut.begin(); it != pecesTut.end(); ) {
-        if(it->distanceInTime<=jocMinutsTimer.getTime()) {
-            aux = (*it);
-            aux.bpecaActiva = true;
-            pecesPantalla.push_back(aux);
-            it = pecesTut.erase(it);
-        }
-        else it++;
-        //it++;
-        //comprobarEstatsPecesEmpty();
-    }
-    for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
-        it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs,1);
-        //comprobarEstatsPecesEmpty();
-    }
-
-}
 void ofApp::drawBack(){
     ofRectangle start;
     start = saltingTypo.getStringBoundingBox("Back",0,0);
@@ -909,16 +908,13 @@ void ofApp::drawBack(){
 
 void ofApp::drawTut1Msg(){
     ofRectangle start;
-    start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(score_tut1) + "/3)",0,0);
+    start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
     ofPushMatrix();
     ofTranslate(220,75);
     ofSetColor(saltingBlue);
-    saltingTypo.drawString("Touch the dots! (" + ofToString(score_tut1) + "/3)",0,0);
+    saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
     ofPopMatrix();
 }
-
-
-
 
 void ofApp::drawInstructions(){
     string instr = "Tutorial";

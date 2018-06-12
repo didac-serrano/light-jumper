@@ -32,7 +32,7 @@ enum pantallesJoc{
     TUTORIAL_2,
     TUTORIAL_3
 };
-int score_tut1;
+
 // http://www.cplusplus.com/forum/beginner/41790/
 // Overload the pantallesJoc++ operator
 inline pantallesJoc& operator++(pantallesJoc& eDOW, int){

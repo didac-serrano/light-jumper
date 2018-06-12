@@ -3,10 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-
     fons_inici.loadImage("start-background.jpg");
     fons_scores.loadImage("score-background.jpg");
-
     // APP
     //ofSetFullscreen(true);
     //ofHideCursor();
@@ -51,6 +49,7 @@ void ofApp::setup(){
     comptadorPeces = 0;
     ofAddListener(pecaEmpty::actualitzaPunts, this, &ofApp::actualitzaPuntsEmpty);
 
+
     // BOTONS
     guib = new ofxUICanvas(20, 20, APP_WIDTH*0.3, APP_HEIGT*0.9);
 
@@ -73,11 +72,18 @@ void ofApp::setup(){
     guib->addIntSlider("botoBackX", 0, APP_WIDTH, &botoBack.botoX)->setIncrement(1);
     guib->addIntSlider("botoBackY", 0, APP_HEIGT, &botoBack.botoY)->setIncrement(1);
 
+    //Boto Return
+    guib->addIntSlider("botoReturnX", 0, APP_WIDTH, &botoReturn.botoX)->setIncrement(1);
+    guib->addIntSlider("botoReturnY", 0, APP_HEIGT, &botoReturn.botoY)->setIncrement(1);
+
+
     //Setup
     botoStart.setup(botoStart.botoX, botoStart.botoY, 75, ofColor(204, 204, 0));
     botoHighScores.setup(botoHighScores.botoX, botoHighScores.botoY, 60, ofColor(204, 204, 0));
     botoInstructions.setup(botoInstructions.botoX, botoInstructions.botoY, 60, ofColor(204, 204, 0));
     botoBack.setup(botoBack.botoX, botoBack.botoY, 55, ofColor(204, 204, 0));
+    botoReturn.setup(botoReturn.botoX, botoReturn.botoY, 30, ofColor(204, 204, 0));
+
 
 
     guib->autoSizeToFitWidgets();
@@ -222,12 +228,17 @@ void ofApp::setup(){
 void ofApp::setVariablesIniciPartida(){
     // APP
     singleton->setPuntuacioJugador(0);
+    singleton->setPuntuacioJugador_tut1(0);
+
+
 
     // BOTONS
     botoStart.botoSeleccionat = false;
     botoHighScores.botoSeleccionat = false;
     botoInstructions.botoSeleccionat = false;
     botoBack.botoSeleccionat = false;
+    botoReturn.botoSeleccionat = false;
+
 
 
     // TEMPS DE JOC
@@ -283,9 +294,15 @@ void ofApp::update(){
             setupPeces();
         }
 
-        if(botoInstructions.botoSeleccionat == true){ // CANVI A pantallaJoc = INSTRUCTIONS;
-            pantallaJoc = INSTRUCTIONS;
-            //cout<<"inside_insts"<<endl;
+        if(botoInstructions.botoSeleccionat == true){ // CANVI A pantallaJoc = TUTORIAL_1;
+            pantallaJoc = TUTORIAL_1;
+            botoInstructions.botoSeleccionat = false;
+            setupTutorial();
+            if(singleton->getPuntuacioJugador_tut1() == 3)
+            {
+                pantallaJoc == START;
+                pecesPantalla.clear();
+            }
         }
 
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
@@ -334,8 +351,22 @@ void ofApp::update(){
             pantallaJoc = START;
             botoBack.botoSeleccionat =false;
         }
-
     }
+
+    else if(pantallaJoc == TUTORIAL_1){
+
+        //HSCORES BUTTON
+        updatePecesTut1();
+        botoReturn.update(totalBlobsDetected, posicionsBlobs);
+        botoReturn.updatem(warpMousePos);
+
+        if (botoReturn.botoSeleccionat == true)
+        {
+            pantallaJoc = START;
+            botoReturn.botoSeleccionat =false;
+        }
+    }
+
 
     // TEMPS ------------------------------------------------------------------------
     jocMinutsTimerSegonsLeft = jocMinutsTimer.getTimeLeftInSeconds();
@@ -403,8 +434,14 @@ void ofApp::draw(){
         //LEFT
     }
 
-    else if(pantallaJoc == INSTRUCTIONS){
-        //RIGHTTTTTTTTTTTTT
+    else if(pantallaJoc == TUTORIAL_1){
+        ofSetColor(0, 0, 77);
+        ofFill();
+        ofRect(0,0, APP_WIDTH, APP_HEIGT);
+        botoReturn.draw(255,255,255, 0, 0);
+        drawReturn();
+        drawTut1Msg();
+        drawPeces();
     }
 
     // PUNTERS ----------------------------------------------------
@@ -666,6 +703,45 @@ void ofApp::setupPeces(){
     }
 }
 
+void ofApp::setupTutorial(){
+    //Fase 1 <idle dots>
+    int g = 0;
+    float dtAux = 0;
+    for(int i=0; i<2; i++) {
+        pecaEmpty peca;
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
+        dtAux += 2;
+        g = (2*i)+3;
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        pecesTut.push_back(peca);
+    }
+    g = 0;
+    dtAux = 0;
+
+    //Fase 2 <idle points>
+
+    //fase 3 <moving dots>
+    for(int i=0; i<2; i++) {
+        pecaEmpty peca;
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
+        dtAux += 2;
+        g = (2*i)+3;
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        pecesMovTut.push_back(peca);
+    }
+}
+
+
 void ofApp::updatePeces(){
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
@@ -682,7 +758,7 @@ void ofApp::updatePeces(){
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs,0);
         //comprobarEstatsPecesEmpty();
     }
 
@@ -747,6 +823,7 @@ void ofApp::actualitzaPuntsEmpty(int & e){
     singleton->setPuntuacioJugador(singleton->getPuntuacioJugador() + e);
 }
 
+
 //--------------------------------------------------------------
 void ofApp::drawTemps(){
     string s = ofToString(jocMinutsTimerMinuts,2,'0') + ":" + ofToString(jocMinutsTimerSegons,2,'0');
@@ -798,6 +875,28 @@ void ofApp::drawScoreList(){
     ofPopMatrix();
 }
 
+void ofApp::updatePecesTut1()
+{
+    pecaEmpty aux;
+    vector<pecaEmpty>::iterator it;
+    for(it = pecesTut.begin(); it != pecesTut.end(); ) {
+        if(it->distanceInTime<=jocMinutsTimer.getTime()) {
+            aux = (*it);
+            aux.bpecaActiva = true;
+            pecesPantalla.push_back(aux);
+            it = pecesTut.erase(it);
+        }
+        else it++;
+        //it++;
+        //comprobarEstatsPecesEmpty();
+    }
+    for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
+        it->updatem(warpMousePos);
+        it->update(totalBlobsDetected, posicionsBlobs,1);
+        //comprobarEstatsPecesEmpty();
+    }
+
+}
 void ofApp::drawBack(){
     ofRectangle start;
     start = saltingTypo.getStringBoundingBox("Back",0,0);
@@ -807,6 +906,18 @@ void ofApp::drawBack(){
     saltingTypo.drawString("Back",0,0);
     ofPopMatrix();
 }
+
+void ofApp::drawTut1Msg(){
+    ofRectangle start;
+    start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(score_tut1) + "/3)",0,0);
+    ofPushMatrix();
+    ofTranslate(220,75);
+    ofSetColor(saltingBlue);
+    saltingTypo.drawString("Touch the dots! (" + ofToString(score_tut1) + "/3)",0,0);
+    ofPopMatrix();
+}
+
+
 
 
 void ofApp::drawInstructions(){
@@ -828,12 +939,25 @@ void ofApp::drawHighScores(){
     ofSetColor(saltingBlue);
     saltingTypo.drawString(hs,0,0);
     ofPopMatrix();
-
-
 }
 
+
+void ofApp::drawReturn(){
+    string hs = "Return";
+    ofRectangle hscores;
+    hscores = saltingTypo.getStringBoundingBox(hs,0,0);
+    ofPushMatrix();
+    ofTranslate(APP_WIDTH_MEITAT-hscores.width*0.5 + -290,610);
+    ofSetColor(saltingBlue);
+    saltingTypo.drawString(hs,0,0);
+    ofPopMatrix();
+}
+
+
+
 //--------------------------------------------------------------
-void ofApp::drawEnd(){
+void ofApp::drawEnd()
+{
     int aux = NUM_PECES_TOTAL;
     string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + "/" + ofToString(aux) + " POINTS";
     ofRectangle rs;

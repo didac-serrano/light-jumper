@@ -13,6 +13,7 @@
 #include "grid/grid.h"
 #include "botons/botoDonut.h"
 #include "peces/pecaEmpty.h"
+#include <string>  
 
 class ofApp : public ofBaseApp{
 
@@ -31,6 +32,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+        void setupTutorial();
+        void updatePecesTut1();
 
         // APP
         Singleton *singleton; // PUNTUACIÓ jugador
@@ -53,6 +56,7 @@ class ofApp : public ofBaseApp{
         botoDonut botoHighScores;
         botoDonut botoInstructions;
         botoDonut botoBack;
+        botoDonut botoReturn;
 
         // GRID
 		grid myGrid;
@@ -79,6 +83,11 @@ class ofApp : public ofBaseApp{
         pecaEmpty peca1;
         vector<pecaEmpty> peces;
         vector<pecaEmpty> pecesPantalla;
+        vector<pecaEmpty> pecesTut;
+       //vector<botoEmpty> botonsTut;
+        vector<pecaEmpty> pecesMovTut;
+
+
         void setupPeca1();
         void setupPeces();
         void updatePeces();
@@ -86,9 +95,12 @@ class ofApp : public ofBaseApp{
         void drawStart();
         void drawHighScores();
         void drawInstructions();
+        void drawReturn();
         void actualitzaPuntsEmpty(int & e);
+        void actualitzaPuntsEmpty_tut1(int & e);
         void drawScoreList();
         void drawBack();
+        void drawTut1Msg();
         //--------------------------------------------------------------
         // DETECCIÓ
         float relAspectWidth; // detecció

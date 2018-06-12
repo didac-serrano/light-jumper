@@ -38,3 +38,13 @@
     <Name>botoBackY</Name>
     <Value>610</Value>
 </Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoReturnX</Name>
+    <Value>60</Value>
+</Widget>
+<Widget>
+    <Kind>42</Kind>
+    <Name>botoReturnY</Name>
+    <Value>690</Value>
+</Widget>

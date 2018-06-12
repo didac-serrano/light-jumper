@@ -2,6 +2,8 @@
 
 // the static event, or any static variable, must be initialized outside of the class definition.
 ofEvent<int> pecaEmpty::actualitzaPunts = ofEvent<int>();
+//ofEvent<int> pecaEmpty::actualitzaPunts_tut1 = ofEvent<int>();
+
 
 void pecaEmpty::setup(int _id, int _numgrid, ofVec2f _pos, int _radi, float _distT){
     pecaBase::setup(_id, _numgrid, _pos, _radi);
@@ -22,7 +24,7 @@ void pecaEmpty::init(int id, int numgrid, ofVec2f pos){
     pecaPos = pos;
 }
 
-void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
+void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS], int input_num){
     pecaBase::update(_total, _pos);
 
     // ESTATS PEÇA I RAIG
@@ -38,8 +40,21 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
         else if(estatPecaNext == IDLE){
         }
         else if(estatPecaNext == TOCADA){
-            ofNotifyEvent(actualitzaPunts, puntuacioPeca);
-            alfaPeca = 255;
+
+            if(input_num == 1)
+            {
+                cout<<"1"<<endl;
+                score_tut1++;
+                //ofNotifyEvent(actualitzaPunts_tut1, puntuacioPeca);
+                alfaPeca = 255;
+            }
+            else if(input_num == 0)
+            {
+                cout<<"0"<<endl;
+                ofNotifyEvent(actualitzaPunts, puntuacioPeca);
+                alfaPeca = 255;
+            }
+
         }
         else if(estatPecaNext == DESAPAREIX){
         }

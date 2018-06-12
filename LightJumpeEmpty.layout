@@ -3,12 +3,32 @@
 	<ActiveTarget name="release" />
 	<File name="src\ofApp.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="30450" topLine="904" />
+			<Cursor1 position="13241" topLine="349" />
 		</Cursor>
 	</File>
 	<File name="src\peces\pecaEmpty.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="182" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src\botons\botoBase.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="569" topLine="22" />
+		</Cursor>
+	</File>
+	<File name="src\ofApp.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1623" topLine="51" />
+		</Cursor>
+	</File>
+	<File name="..\..\..\addons\ofxTimer\src\ofxTimer.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1611" topLine="53" />
+		</Cursor>
+	</File>
+	<File name="..\..\..\addons\ofxTimer\src\ofxTimer.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3557" topLine="155" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

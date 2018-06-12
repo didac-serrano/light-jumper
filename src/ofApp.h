@@ -64,6 +64,8 @@ class ofApp : public ofBaseApp{
         // TEMPS DE JOC
         ofxTimer jocMinutsTimer;
         ofxTimer Tuto1Timer;
+        ofxTimer shortTimer;
+
         float jocMinutsTimerSegonsLeft;
         int jocMinutsTimerMinuts;
         int jocMinutsTimerSegons;
@@ -102,6 +104,7 @@ class ofApp : public ofBaseApp{
         void drawScoreList();
         void drawBack();
         void drawTut1Msg();
+        void drawSkipMessage(int tuto_phase);
         //--------------------------------------------------------------
         // DETECCIÓ
         float relAspectWidth; // detecció
@@ -133,6 +136,7 @@ class ofApp : public ofBaseApp{
 
         int threshold;
         bool bflipV, bflipH;
+        int tuto_phase;
 
         ofPoint puntsSrc[4]; // warp src
         ofPoint puntsDst[4]; // warp desti
@@ -166,4 +170,5 @@ class ofApp : public ofBaseApp{
         vector<int> songPeaks;
         void setupMusic(string filename);
         string gameLevel = "";
+
 };

@@ -25,7 +25,7 @@ public:
     // BOTÓ
     bool botoSeleccionat;
     int botoRadi, botoX, botoY;
-
+    float speed;
     float velocitatCarrega;
     float amtCarrega360 = 0;
 

@@ -93,11 +93,14 @@ class ofApp : public ofBaseApp{
         void setupPeces();
         void setupTutorial1();
         void setupTutorial2();
+        void setupTutorial3();
 
         //UPDATEs
         void updatePeces();
         void updatePecesTut1();
         void updatePecesTut2();
+        void updatePecesTut3();
+        void updatePecesTut4();
 
         //DRAWs
         void drawPeces();
@@ -107,7 +110,7 @@ class ofApp : public ofBaseApp{
         void drawReturn();
         void drawScoreList();
         void drawBack();
-        void drawTut1Msg();
+        void drawTutMsg();
 
         void actualitzaPuntsEmpty(int & e);
         void drawSkipMessage(int tuto_phase);
@@ -140,7 +143,8 @@ class ofApp : public ofBaseApp{
 
         int minArea;
         int maxArea;
-
+        int max_score_tutorial;
+        int current_score_tutorial;
         int threshold;
         bool bflipV, bflipH;
         int tuto_phase;

@@ -16,7 +16,6 @@ public:
 
     // CARREGA CIRCULAR
     ofPath curvaCarrega;
-    ofImage button_background;
 
 protected:
 

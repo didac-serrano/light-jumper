@@ -3,6 +3,9 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
+
+    max_score_tutorial = 0;
+    current_score_tutorial = 0;
     fons_inici.loadImage("start-background.jpg");
     fons_scores.loadImage("score-background.jpg");
     // APP
@@ -348,6 +351,7 @@ void ofApp::update(){
         }
         if(shortTimer.isTimerFinished()){
              pantallaJoc = SKIP_PHASE_TUTORIAL;
+             pecesTut.clear();
              setupTutorial2();
              shortTimer.reset();
              shortTimer.stopTimer();
@@ -383,6 +387,43 @@ void ofApp::update(){
             tutoTimer.stopTimer();
         }
         if(shortTimer.isTimerFinished()){
+             setupTutorial3();
+             pantallaJoc = SKIP_PHASE_TUTORIAL;
+             shortTimer.reset();
+             shortTimer.stopTimer();
+             singleton->setPuntuacioJugador(0);
+             //FER SETUP SEGUENT FASE
+        }
+        if (botoReturn.botoSeleccionat == true)
+        {
+            pantallaJoc = START;
+            botoReturn.botoSeleccionat = false;
+            singleton->setPuntuacioJugador(0);
+            duradaTheEndTimer.reset();
+            duradaTheEndTimer.stopTimer();
+            shortTimer.reset();
+            shortTimer.stopTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
+            pecesTut.clear();
+            pecesPantalla.clear();
+            tuto_phase = 1;
+        }
+    }
+
+    else if(pantallaJoc == TUTORIAL_3){
+        //HSCORES BUTTON
+        updatePecesTut3();
+        botoReturn.update(totalBlobsDetected, posicionsBlobs);
+        botoReturn.updatem(warpMousePos);
+
+        if (singleton->getPuntuacioJugador()==13 || tutoTimer.isTimerFinished()) {
+            shortTimer.startTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
+        }
+        if(shortTimer.isTimerFinished()){
+            //setupTutorial4();
              pantallaJoc = SKIP_PHASE_TUTORIAL;
              shortTimer.reset();
              shortTimer.stopTimer();
@@ -418,8 +459,9 @@ void ofApp::update(){
                     tuto_phase = 2;
                     break;
                 case(2):
-                    pantallaJoc = START;
-                    setVariablesIniciPartida();
+                    pantallaJoc = TUTORIAL_3;
+                    tutoTimer.startTimer();
+                    tuto_phase = 3;
                     break;/*
                 case(3):
                     pantallaJoc = TUTORIAL_4;
@@ -525,13 +567,13 @@ void ofApp::draw(){
         //LEFT
     }
 
-    else if(pantallaJoc == TUTORIAL_2 || pantallaJoc == TUTORIAL_1){
+    else if(pantallaJoc == TUTORIAL_1 || pantallaJoc == TUTORIAL_2 || pantallaJoc == TUTORIAL_3) {
         ofSetColor(0, 0, 77);
         ofFill();
         ofRect(0,0, APP_WIDTH, APP_HEIGT);
         botoReturn.draw(255,255,255, 0, 0);
         drawReturn();
-        drawTut1Msg();
+        drawTutMsg();
         drawPeces();
     }
 
@@ -862,6 +904,87 @@ void ofApp::setupTutorial2(){
     }
 }
 
+void ofApp::setupTutorial3(){
+    //Fase 2 <moving dots>
+
+
+    int g = 0;
+    float dtAux = 3;
+    int offsetArray[] = {30, 6, 43, 70, 62, 72, 79};
+    for(int i=0; i<7; i++) {
+        pecaEmpty peca;
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
+        dtAux += 3;
+        g = offsetArray[i];
+        cout<<dtAux<<endl;
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        pecesTut.push_back(peca);
+    }
+
+
+
+    g = 0;
+    dtAux = 3;
+    int offsetArray2[] = {10, 25, 66, 52, 21, 24, 36, 45};
+    ofVec2f speed;
+    for(int i=0; i<sizeof(offsetArray2)/sizeof(offsetArray2[0]); i++) {
+        pecaEmpty peca;
+        switch(i)
+        {
+            case(0):
+                speed.x = 1;
+                speed.y = 1;
+            break;
+            case(1):
+                speed.x = -1;
+                speed.y = 1;
+            break;
+            case(2):
+                speed.x = 0;
+                speed.y = -1;
+            break;
+            case(3):
+                speed.x = -1;
+                speed.y = -1;
+            break;
+            case(4):
+                speed.x = 1;
+                speed.y = 1;
+            break;
+            case(5):
+                speed.x = -1;
+                speed.y = 1;
+            break;
+            case(6):
+                speed.x = 1;
+                speed.y = 0;
+            break;
+            case(7):
+                speed.x = 0;
+                speed.y = -1;
+            break;
+        }
+
+        peca.setups(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,speed);
+        dtAux += 2;
+        g = offsetArray2[i];
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        pecesMovTut.push_back(peca);
+    }
+}
+
+
+
 void ofApp::updatePeces(){
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
@@ -920,6 +1043,64 @@ void ofApp::updatePecesTut2()
         it->pecaPos = (it->pecaPos + (it->speed));
     }
 }
+
+void ofApp::updatePecesTut3()
+{
+    pecaEmpty aux;
+    vector<pecaEmpty>::iterator it;
+    for(it = pecesTut.begin(); it != pecesTut.end(); ) {
+        if(it->distanceInTime<=tutoTimer.getTime()) {
+            aux = (*it);
+            aux.bpecaActiva = true;
+            pecesPantalla.push_back(aux);
+            it = pecesTut.erase(it);
+        }
+        else it++;
+    }
+    for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
+        it->updatem(warpMousePos);
+        it->update(totalBlobsDetected, posicionsBlobs);
+    }
+
+
+
+    for(it = pecesMovTut.begin(); it != pecesMovTut.end(); ) {
+        if(it->distanceInTime<=tutoTimer.getTime()) {
+            aux = (*it);
+            aux.bpecaActiva = true;
+            pecesPantalla.push_back(aux);
+            it = pecesMovTut.erase(it);
+        }
+        else it++;
+    }
+    for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
+        it->updatem(warpMousePos);
+        it->update(totalBlobsDetected, posicionsBlobs);
+        //it->pecaPos = it->pecaPos.dot(it->speed);
+        it->pecaPos = (it->pecaPos + 3*(it->speed));
+    }
+}
+
+
+void ofApp::updatePecesTut4()
+{
+    pecaEmpty aux;
+    vector<pecaEmpty>::iterator it;
+    for(it = pecesTut.begin(); it != pecesTut.end(); ) {
+        if(it->distanceInTime<=tutoTimer.getTime()) {
+            aux = (*it);
+            aux.bpecaActiva = true;
+            pecesPantalla.push_back(aux);
+            it = pecesTut.erase(it);
+        }
+        else it++;
+    }
+    for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
+        it->updatem(warpMousePos);
+        it->update(totalBlobsDetected, posicionsBlobs);
+    }
+}
+
 
 void ofApp::drawPeces() {
     vector<pecaEmpty>::iterator it;
@@ -1024,24 +1205,70 @@ void ofApp::drawBack(){
     ofPopMatrix();
 }
 
-void ofApp::drawTut1Msg(){
+void ofApp::drawTutMsg(){
     ofRectangle start;
-    start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
-    ofPushMatrix();
-    ofTranslate(220,75);
-    ofSetColor(saltingBlue);
-    saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
-    ofPopMatrix();
+
+    switch(pantallaJoc)
+    {
+        case(TUTORIAL_1):
+            start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
+            ofPushMatrix();
+            ofTranslate(220,75);
+            ofSetColor(saltingBlue);
+            saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
+            ofPopMatrix();
+            max_score_tutorial = 5;
+            current_score_tutorial = singleton->getPuntuacioJugador();
+            break;
+        case(TUTORIAL_2):
+            start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/8)",0,0);
+            ofPushMatrix();
+            ofTranslate(220,75);
+            ofSetColor(saltingBlue);
+            saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/8)",0,0);
+            max_score_tutorial = 8;
+            ofPopMatrix();
+            current_score_tutorial = singleton->getPuntuacioJugador();
+            break;
+        case(TUTORIAL_3):
+            start = saltingTypo.getStringBoundingBox("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/15)",0,0);
+            ofPushMatrix();
+            ofTranslate(220,75);
+            ofSetColor(saltingBlue);
+            saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/15)",0,0);
+            ofPopMatrix();
+            max_score_tutorial = 15;
+            current_score_tutorial = singleton->getPuntuacioJugador();
+            break;
+
+    }
+
 }
 
 void ofApp::drawSkipMessage(int tuto_phase){
     ofRectangle start;
-    start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!",0,0);
-    ofPushMatrix();
-    ofTranslate(85 ,400);
-    ofSetColor(saltingBlue);
-    saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!",0,0);
-    ofPopMatrix();
+    if(max_score_tutorial - current_score_tutorial == 0)
+    {
+        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
+        ofPushMatrix();
+        ofTranslate(85 ,250);
+        ofSetColor(saltingBlue);
+        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) +"\n\n\t       Congratulations!",0,0);
+        ofPopMatrix();
+    }
+
+    else
+    {
+        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
+        ofPushMatrix();
+        ofTranslate(85 ,250);
+        ofSetColor(saltingBlue);
+        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) + "\n\n\t      It could be better!",0,0);
+        ofPopMatrix();
+        
+    }
+    
+
 }
 
 void ofApp::drawInstructions(){

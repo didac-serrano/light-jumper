@@ -753,7 +753,7 @@ void ofApp::setupPeces(){
     float dtAux = 0;
     for(int i=0; i<NUM_PECES_TOTAL; i++) {
         pecaEmpty peca;
-        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
         dtAux += 60/float(NUM_PECES_MIN);
         if (i % 4 == 0){
             offs = 0;
@@ -794,7 +794,7 @@ void ofApp::setupTutorial1(){
     int offsetArray[] = {10, 25, 66, 52, 21};
     for(int i=0; i<5; i++) {
         pecaEmpty peca;
-        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
         dtAux += 3;
         g = offsetArray[i];
         cout<<dtAux<<endl;
@@ -819,7 +819,7 @@ void ofApp::setupTutorial2(){
         ofVec2f speed;
         speed.x = cos(angle);
         speed.y = sin(angle);
-        peca.setups(i,0,myGrid.returnPosicioOfPeca(0),35,dtAux,speed);
+        peca.setups(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,speed);
         dtAux += 2;
         g = offsetArray[i];
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
@@ -886,7 +886,8 @@ void ofApp::updatePecesTut2()
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
         it->update(totalBlobsDetected, posicionsBlobs);
-        it->pecaPos = (it->pecaPos + it->speed);
+        //it->pecaPos = it->pecaPos.dot(it->speed);
+        it->pecaPos = (it->pecaPos + (it->speed));
     }
 }
 

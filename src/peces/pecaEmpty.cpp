@@ -62,7 +62,7 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
 
     }
     else if(estatPeca == APAREIX){
-        alfaPeca +=3;
+        alfaPeca +=(255/10);
         if(alfaPeca >= 255){
             estatPeca = CANVIA_ESTAT;
             estatPecaNext = ACTIVA;
@@ -83,11 +83,11 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
         tocadaTimer-=1;
         if(tocadaTimer<=0) {
             estatPeca = CANVIA_ESTAT;
-            estatPecaNext = DESAPAREIX;
+            estatPecaNext = THE_END;
         }
     }
     else if(estatPeca == DESAPAREIX){
-        alfaPeca -=5;
+        alfaPeca -=(255/10);
         if(alfaPeca <= 0){
             estatPeca = CANVIA_ESTAT;
             estatPecaNext = THE_END;
@@ -95,11 +95,11 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
     }
     else if(estatPeca == THE_END){
         estatPeca = CANVIA_ESTAT;
-        estatPecaNext = SETUP;
+        //estatPecaNext = SETUP;
     }
 
 }
-
+/*
 void pecaEmpty::draw(){
     // PEÇA
     if(estatPeca == SETUP){
@@ -151,4 +151,67 @@ void pecaEmpty::draw(){
     }
 
     pecaBase::draw();
-}
+}*/
+
+//andreas
+void pecaEmpty::draw(){
+    // PEÇA
+    if(estatPeca == SETUP){
+
+    }
+    else if(estatPeca == APAREIX){
+        ofPushStyle();
+        ofSetColor(225,225,20,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio);
+        ofSetColor(200,200,10,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio - 10);
+        ofPopStyle();
+    }
+    else if(estatPeca == ACTIVA){
+        ofPushStyle();
+        ofSetColor(255,255,0,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio);
+        ofPopStyle();
+    }
+    else if(estatPeca == IDLE){
+        ofPushStyle();
+        ofSetColor(255,255*(idleTimer/IDLE_TIMER_PECA),0,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio);
+        ofSetColor(240,240*(idleTimer/IDLE_TIMER_PECA),75*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-5);
+        ofSetColor(225,225*(idleTimer/IDLE_TIMER_PECA),75*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-10);
+        ofSetColor(215,215*(idleTimer/IDLE_TIMER_PECA),75*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-15);
+        ofSetColor(205,205*(idleTimer/IDLE_TIMER_PECA),10*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-20);
+        ofSetColor(195,195*(idleTimer/IDLE_TIMER_PECA),75*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-25);
+        ofSetColor(185,185*(idleTimer/IDLE_TIMER_PECA),10*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-30);
+        ofSetColor(175,175*(idleTimer/IDLE_TIMER_PECA),75*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-35);
+        ofSetColor(165,165*(idleTimer/IDLE_TIMER_PECA),10*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-40);
+        ofSetColor(155,155*(idleTimer/IDLE_TIMER_PECA),75*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-45);
+        ofSetColor(145,145*(idleTimer/IDLE_TIMER_PECA),10*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-50);
+        ofPopStyle();
+    }
+    else if(estatPeca == TOCADA){
+        ofPushStyle();
+        ofSetColor(200*(tocadaTimer/TOCADA_TIMER_PECA),200*(tocadaTimer/TOCADA_TIMER_PECA),255,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio);
+        ofPopStyle();
+    }
+    else if(estatPeca == DESAPAREIX){
+        ofPushStyle();
+        ofSetColor(255,0,0,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio);
+        ofPopStyle();
+    }
+
+    pecaBase::draw();
+} //andreas
+

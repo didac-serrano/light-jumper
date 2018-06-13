@@ -169,6 +169,8 @@ class ofApp : public ofBaseApp{
         // GUI HELP
         ofxUICanvas *guih;
         void guiEvent(ofxUIEventArgs &e); // per a tots els GUIs
+        void setupDebugGUI();
+        void setupCamera();
 
         //--------------------------------------------------------------
         // HELP INFO

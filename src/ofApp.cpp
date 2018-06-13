@@ -17,24 +17,17 @@ void ofApp::setup(){
     singleton = Singleton::getInstance();
 
     // MUSIC
-    soundPlayer.loadSound("Lips Are Movin.mp3");
+    soundPlayer.loadSound("LipsAreMovin.mp3");
     setupMusic("lipsAreMovinLevel");
 
     // TEMPS DE JOC
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
 
-//<<<<<<< HEAD
-    tutoTimer.setup(18000, false); // 3 minuts = 3*60*1000 ms
-    tutoTimer.stopTimer();/*
-=======
     tutoTimer.setup(18000, false); // 18 segons
     tutoTimer.stopTimer();
->>>>>>> 524ce5dc5f947170b69bc8fd8dcb713246a91f1f*/
-
-    duradaTheEndTimer.setup(5*1000, false); // 5 segons
+    duradaTheEndTimer.setup(5000, false); // 5 segons
     duradaTheEndTimer.stopTimer();
-
     shortTimer.setup(2000, false); // 2 segons
     shortTimer.stopTimer();
 
@@ -257,6 +250,23 @@ void ofApp::setVariablesIniciPartida(){
     shortTimer.stopTimer();
     duradaTheEndTimer.reset();
     duradaTheEndTimer.stopTimer();
+}
+
+void ofApp::setupMusic(string filename) {
+    ifstream levelFile;
+    int positionMs;
+    levelFile.open("lipsAreMovinLevel.txt");
+    if (!levelFile) {
+        cout << "Unable to open song level file :(";
+        std::exit(1); // terminate with error
+    }
+
+    while (levelFile >> positionMs) {
+        songPeaks.push_back(positionMs);
+    }
+    cout << "done reading level!";
+    cout << songPeaks.size();
+    levelFile.close();
 }
 
 //--------------------------------------------------------------
@@ -657,6 +667,22 @@ void ofApp::keyPressed(int key){
         bshowImagesAndContours = false;
         guib->toggleVisible();
     }
+    else if(key == 'p'){
+        soundPlayer.play();
+    }
+    else if(key == ' ' && soundPlayer.getIsPlaying()) {
+        stringstream ss;
+        ss << soundPlayer.getPositionMS();
+        ss << "\n";
+        gameLevel.append(ss.str());
+        cout << ss.str();
+    }
+    else if(key == 's') {
+        ofstream myfile;
+        myfile.open("newLevel.txt");
+        myfile << gameLevel;
+        myfile.close();
+     }
 }
 
 //--------------------------------------------------------------
@@ -928,23 +954,6 @@ string ofApp::pantallaToString(){
     else{
         return "NO SE";
     }
-}
-
-void ofApp::setupMusic(string filename) {
-    ifstream levelFile;
-    int positionMs;
-    levelFile.open("lipsAreMovinLevel.txt");
-    if (!levelFile) {
-        cout << "Unable to open song level file :(";
-        std::exit(1); // terminate with error
-    }
-
-    while (levelFile >> positionMs) {
-        songPeaks.push_back(positionMs);
-    }
-    cout << "done reading level!";
-    cout << songPeaks.size();
-    levelFile.close();
 }
 
 //--------------------------------------------------------------

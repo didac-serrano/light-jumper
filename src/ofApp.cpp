@@ -353,6 +353,8 @@ void ofApp::update(){
             duradaTheEndTimer.stopTimer();
             shortTimer.reset();
             shortTimer.stopTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
             pecesTut.clear();
             pecesPantalla.clear();
             tuto_phase = 1;
@@ -386,6 +388,8 @@ void ofApp::update(){
             duradaTheEndTimer.stopTimer();
             shortTimer.reset();
             shortTimer.stopTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
             pecesTut.clear();
             pecesPantalla.clear();
             tuto_phase = 1;

@@ -25,12 +25,15 @@
 
 enum pantallesJoc{
     START,
+    SKIP_PHASE_TUTORIAL,
     PLAY,
     END,
     HIGH_SCORES,
     TUTORIAL_1,
     TUTORIAL_2,
-    TUTORIAL_3
+    TUTORIAL_3,
+    TUTORIAL_4,
+    TUTORIAL_5,
 };
 
 // http://www.cplusplus.com/forum/beginner/41790/

@@ -24,12 +24,19 @@ void ofApp::setup(){
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
 
-    TutoTimer.setup(18000, false); // 3 minuts = 3*60*1000 ms
-    TutoTimer.stopTimer();
-
+//<<<<<<< HEAD
+    tutoTimer.setup(18000, false); // 3 minuts = 3*60*1000 ms
+    tutoTimer.stopTimer();/*
+=======
+    tutoTimer.setup(18000, false); // 18 segons
+    tutoTimer.stopTimer();
+>>>>>>> 524ce5dc5f947170b69bc8fd8dcb713246a91f1f*/
 
     duradaTheEndTimer.setup(5*1000, false); // 5 segons
     duradaTheEndTimer.stopTimer();
+
+    shortTimer.setup(2000, false); // 2 segons
+    shortTimer.stopTimer();
 
     // WARPER
     warper.setup(0,0,APP_WIDTH,APP_HEIGT);
@@ -232,6 +239,7 @@ void ofApp::setup(){
 void ofApp::setVariablesIniciPartida(){
     // APP
     singleton->setPuntuacioJugador(0);
+    tuto_phase = 1;
 
     // BOTONS
     botoStart.botoSeleccionat = false;
@@ -243,10 +251,10 @@ void ofApp::setVariablesIniciPartida(){
     // TEMPS DE JOC
     jocMinutsTimer.reset();
     jocMinutsTimer.stopTimer();
-
-    TutoTimer.reset();
-    TutoTimer.stopTimer();
-
+    tutoTimer.reset();
+    tutoTimer.stopTimer();
+    shortTimer.reset();
+    shortTimer.stopTimer();
     duradaTheEndTimer.reset();
     duradaTheEndTimer.stopTimer();
 }
@@ -297,10 +305,10 @@ void ofApp::update(){
         }
 
         if(botoInstructions.botoSeleccionat == true){ // CANVI A pantallaJoc = TUTORIAL_1;
-            pantallaJoc = TUTORIAL_2;
-            TutoTimer.startTimer();
+            pantallaJoc = TUTORIAL_1;
+            tutoTimer.startTimer();
             botoInstructions.botoSeleccionat = false;
-            setupTutorial2();
+            setupTutorial1();
         }
 
         if(botoHighScores.botoSeleccionat == true){ // CANVI A pantallaJoc = HIGH_SCORES;
@@ -322,21 +330,32 @@ void ofApp::update(){
         updatePecesTut1();
         botoReturn.update(totalBlobsDetected, posicionsBlobs);
         botoReturn.updatem(warpMousePos);
-        //refactor needed
-        if (singleton->getPuntuacioJugador()==5 || TutoTimer.isTimerFinished()) {
-            duradaTheEndTimer.startTimer();
-            TutoTimer.reset();
-            TutoTimer.stopTimer();
+
+        if (singleton->getPuntuacioJugador()==5 || tutoTimer.isTimerFinished()) {
+            shortTimer.startTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
         }
-        if (botoReturn.botoSeleccionat == true || duradaTheEndTimer.isTimerFinished())
+        if(shortTimer.isTimerFinished()){
+             pantallaJoc = SKIP_PHASE_TUTORIAL;
+             setupTutorial2();
+             shortTimer.reset();
+             shortTimer.stopTimer();
+             singleton->setPuntuacioJugador(0);
+             //FER SETUP SEGUENT FASE
+        }
+        if (botoReturn.botoSeleccionat == true)
         {
             pantallaJoc = START;
             botoReturn.botoSeleccionat = false;
             singleton->setPuntuacioJugador(0);
             duradaTheEndTimer.reset();
             duradaTheEndTimer.stopTimer();
+            shortTimer.reset();
+            shortTimer.stopTimer();
             pecesTut.clear();
             pecesPantalla.clear();
+            tuto_phase = 1;
         }
     }
 
@@ -345,21 +364,54 @@ void ofApp::update(){
         updatePecesTut2();
         botoReturn.update(totalBlobsDetected, posicionsBlobs);
         botoReturn.updatem(warpMousePos);
-        //refactor needed
-        if (singleton->getPuntuacioJugador()==8 || TutoTimer.isTimerFinished()) {
-            duradaTheEndTimer.startTimer();
-            TutoTimer.reset();
-            TutoTimer.stopTimer();
+
+        if (singleton->getPuntuacioJugador()==8 || tutoTimer.isTimerFinished()) {
+            shortTimer.startTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
         }
-        if (botoReturn.botoSeleccionat == true || duradaTheEndTimer.isTimerFinished())
+        if(shortTimer.isTimerFinished()){
+             pantallaJoc = SKIP_PHASE_TUTORIAL;
+             shortTimer.reset();
+             shortTimer.stopTimer();
+             singleton->setPuntuacioJugador(0);
+             //FER SETUP SEGUENT FASE
+        }
+        if (botoReturn.botoSeleccionat == true)
         {
             pantallaJoc = START;
             botoReturn.botoSeleccionat = false;
             singleton->setPuntuacioJugador(0);
             duradaTheEndTimer.reset();
             duradaTheEndTimer.stopTimer();
+            shortTimer.reset();
+            shortTimer.stopTimer();
             pecesTut.clear();
             pecesPantalla.clear();
+            tuto_phase = 1;
+        }
+    }
+
+    else if(pantallaJoc == SKIP_PHASE_TUTORIAL){
+        shortTimer.startTimer();
+        if (shortTimer.isTimerFinished()){
+            shortTimer.reset();
+            shortTimer.stopTimer();
+            switch(tuto_phase) {
+                case(1):
+                    pantallaJoc = TUTORIAL_2;
+                    tutoTimer.startTimer();
+                    tuto_phase = 2;
+                    break;
+                case(2):
+                    pantallaJoc = START;
+                    setVariablesIniciPartida();
+                    break;/*
+                case(3):
+                    pantallaJoc = TUTORIAL_4;
+                case(4):
+                    pantallaJoc = TUTORIAL_5;*/
+            }
         }
     }
 
@@ -384,13 +436,10 @@ void ofApp::update(){
     }
 
     else if(pantallaJoc == HIGH_SCORES){
-
         //HSCORES BUTTON
         botoBack.update(totalBlobsDetected, posicionsBlobs);
         botoBack.updatem(warpMousePos);
-
-        if (botoBack.botoSeleccionat == true)
-        {
+        if (botoBack.botoSeleccionat == true){
             pantallaJoc = START;
             botoBack.botoSeleccionat =false;
         }
@@ -462,7 +511,7 @@ void ofApp::draw(){
         //LEFT
     }
 
-    else if(pantallaJoc == TUTORIAL_2){
+    else if(pantallaJoc == TUTORIAL_2 || pantallaJoc == TUTORIAL_1){
         ofSetColor(0, 0, 77);
         ofFill();
         ofRect(0,0, APP_WIDTH, APP_HEIGT);
@@ -470,6 +519,13 @@ void ofApp::draw(){
         drawReturn();
         drawTut1Msg();
         drawPeces();
+    }
+
+    else if(pantallaJoc == SKIP_PHASE_TUTORIAL){
+        ofSetColor(59, 0, 100);
+        ofFill();
+        ofRect(0,0, APP_WIDTH, APP_HEIGT);
+        drawSkipMessage(tuto_phase);
     }
 
     // PUNTERS ----------------------------------------------------
@@ -800,7 +856,7 @@ void ofApp::updatePecesTut1()
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
     for(it = pecesTut.begin(); it != pecesTut.end(); ) {
-        if(it->distanceInTime<=TutoTimer.getTime()) {
+        if(it->distanceInTime<=tutoTimer.getTime()) {
             aux = (*it);
             aux.bpecaActiva = true;
             pecesPantalla.push_back(aux);
@@ -819,7 +875,7 @@ void ofApp::updatePecesTut2()
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
     for(it = pecesMovTut.begin(); it != pecesMovTut.end(); ) {
-        if(it->distanceInTime<=TutoTimer.getTime()) {
+        if(it->distanceInTime<=tutoTimer.getTime()) {
             aux = (*it);
             aux.bpecaActiva = true;
             pecesPantalla.push_back(aux);
@@ -964,6 +1020,16 @@ void ofApp::drawTut1Msg(){
     ofPopMatrix();
 }
 
+void ofApp::drawSkipMessage(int tuto_phase){
+    ofRectangle start;
+    start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!",0,0);
+    ofPushMatrix();
+    ofTranslate(85 ,400);
+    ofSetColor(saltingBlue);
+    saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!",0,0);
+    ofPopMatrix();
+}
+
 void ofApp::drawInstructions(){
     string instr = "Tutorial";
     ofRectangle instructions;
@@ -974,6 +1040,7 @@ void ofApp::drawInstructions(){
     saltingTypo.drawString(instr,0,0);
     ofPopMatrix();
 }
+
 void ofApp::drawHighScores(){
     string hs = "Scores";
     ofRectangle hscores;
@@ -985,7 +1052,6 @@ void ofApp::drawHighScores(){
     ofPopMatrix();
 }
 
-
 void ofApp::drawReturn(){
     string hs = "Return";
     ofRectangle hscores;
@@ -996,8 +1062,6 @@ void ofApp::drawReturn(){
     saltingTypo.drawString(hs,0,0);
     ofPopMatrix();
 }
-
-
 
 //--------------------------------------------------------------
 void ofApp::drawEnd()

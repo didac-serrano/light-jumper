@@ -43,6 +43,7 @@ class ofApp : public ofBaseApp{
         void setVariablesIniciPartida(); // endreçat
         void drawPuntuacio();
         void drawEnd();
+
        // void drawBackground();
         ofImage fons_inici;
         ofImage boto_start;
@@ -86,7 +87,6 @@ class ofApp : public ofBaseApp{
         vector<pecaEmpty> peces;
         vector<pecaEmpty> pecesPantalla;
         vector<pecaEmpty> pecesTut;
-       //vector<botoEmpty> botonsTut;
         vector<pecaEmpty> pecesMovTut;
 
         //SETUPs
@@ -172,6 +172,8 @@ class ofApp : public ofBaseApp{
         // GUI HELP
         ofxUICanvas *guih;
         void guiEvent(ofxUIEventArgs &e); // per a tots els GUIs
+        void setupDebugGUI();
+        void setupCamera();
 
         //--------------------------------------------------------------
         // HELP INFO
@@ -183,5 +185,4 @@ class ofApp : public ofBaseApp{
         int nextSongPeakIndex;
         void setupMusic(string filename);
         string gameLevel = "";
-
 };

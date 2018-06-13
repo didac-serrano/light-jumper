@@ -3,11 +3,11 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-
     max_score_tutorial = 0;
     current_score_tutorial = 0;
-    fons_inici.loadImage("start-background.jpg");
-    fons_scores.loadImage("score-background.jpg");
+    fons_inici.loadImage("start-background.png");
+    fons_scores.loadImage("start-background.png");
+
     // APP
     //ofSetFullscreen(true);
     //ofHideCursor();
@@ -45,44 +45,16 @@ void ofApp::setup(){
     punterHeightMig = punter.getHeight()*0.5;
 
     // COLOR JOC
-    saltingBlue = ofColor(0,0,255);
+    saltingBlue = ofColor(255,255,255);
 
     // TYPO
-	ofTrueTypeFont::setGlobalDpi(115);
-	saltingTypo.loadFont("GlametrixBold.otf", 27, true, true); // temps nivell i normal, kids, pro
-	saltingTypo.setLetterSpacing(1);
+	saltingTypo.loadFont("Verdana.ttf", 25, true, true);
+	saltingTypo.setLineHeight(14.0f);
+	saltingTypo.setLetterSpacing(1.037);
 
     // PECES
     comptadorPeces = 0;
     ofAddListener(pecaEmpty::actualitzaPunts, this, &ofApp::actualitzaPuntsEmpty);
-
-
-    // BOTONS
-    guib = new ofxUICanvas(20, 20, APP_WIDTH*0.3, APP_HEIGT*0.9);
-
-    guib->addLabel(":: BOTONS ::", OFX_UI_FONT_MEDIUM);
-    guib->addSpacer();
-
-    //Boto Start
-    guib->addIntSlider("botoStartX", 0, APP_WIDTH, &botoStart.botoX)->setIncrement(1);
-    guib->addIntSlider("botoStartY", 0, APP_HEIGT, &botoStart.botoY)->setIncrement(1);
-
-    //Boto High_scores
-    guib->addIntSlider("botoHighScoresX", 0, APP_WIDTH, &botoHighScores.botoX)->setIncrement(1);
-    guib->addIntSlider("botoHighScoresY", 0, APP_HEIGT, &botoHighScores.botoY)->setIncrement(1);
-
-    //Boto Instructions
-    guib->addIntSlider("botoInstructionsX", 0, APP_WIDTH, &botoInstructions.botoX)->setIncrement(1);
-    guib->addIntSlider("botoInstructionsY", 0, APP_HEIGT, &botoInstructions.botoY)->setIncrement(1);
-
-    //Boto Back
-    guib->addIntSlider("botoBackX", 0, APP_WIDTH, &botoBack.botoX)->setIncrement(1);
-    guib->addIntSlider("botoBackY", 0, APP_HEIGT, &botoBack.botoY)->setIncrement(1);
-
-    //Boto Return
-    guib->addIntSlider("botoReturnX", 0, APP_WIDTH, &botoReturn.botoX)->setIncrement(1);
-    guib->addIntSlider("botoReturnY", 0, APP_HEIGT, &botoReturn.botoY)->setIncrement(1);
-
 
     //Setup
     botoStart.setup(botoStart.botoX, botoStart.botoY, 75, ofColor(204, 204, 0));
@@ -91,141 +63,9 @@ void ofApp::setup(){
     botoBack.setup(botoBack.botoX, botoBack.botoY, 55, ofColor(204, 204, 0));
     botoReturn.setup(botoReturn.botoX, botoReturn.botoY, 30, ofColor(204, 204, 0));
 
-
-
-    guib->autoSizeToFitWidgets();
-    ofAddListener(guib->newGUIEvent,this,&ofApp::guiEvent);
-    guib->loadSettings("LightJumper_Botons.xml");
-
-    guib->setVisible(false);
-
-    // GRID
-    myGrid.setup();
-    myGrid.gridActivaExcepteMargesSupInfDretaEsq();
-
-    // GUI APP
-    guia = new ofxUICanvas(20, 20, APP_WIDTH*0.4, APP_HEIGT*0.9);
-
-    guia->addLabel(":: LIGHT JUMPER SETTINGS ::", OFX_UI_FONT_MEDIUM);
-    guia->addSpacer();
-
-    guia->addSpacer();
-    guia->addLabelButton("load factory defaults", false);
-
-    guia->addSpacer();
-    guia->addLabel("GAME IMAGE CORNERS", OFX_UI_FONT_MEDIUM);
-    guia->addLabelButton("reset corners", false);
-
-    guia->addSpacer();
-    guia->addLabel("SENSOR SENSIBILITY", OFX_UI_FONT_MEDIUM);
-    guia->addIntSlider("sensibility", 0, 255, &threshold);
-
-    guia->addSpacer();
-    guia->addLabel("4 GAME CONTROLLERS POSITION", OFX_UI_FONT_MEDIUM);
-    guia->addSlider("enlarge gamer", 0.0, 10.0, &ampliaHeight);
-    guia->addSlider("adjustment up-down", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &baixaHoTotAvall);
-    guia->addSlider("adjustment left-right", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &mouHoTotDretaEsq);
-
-    guia->autoSizeToFitWidgets();
-    ofAddListener(guia->newGUIEvent,this,&ofApp::guiEvent);
-    guia->loadSettings("LightJumper_Deteccio.xml");
-
-    guia->setVisible(false);
-
-    // HELP
-    guih = new ofxUICanvas(20, 20, APP_WIDTH*0.5, APP_HEIGT*0.9);
-
-    guih->addLabel(":: HELP ::", OFX_UI_FONT_MEDIUM);
-    guih->addSpacer();
-    guih->addFPS();
-    guih->addSpacer();
-    guih->addTextArea("helpText1", "step 1) WARP: press W | w and mouse click and drag to adjust game's image corners");
-    guih->addTextArea("helpText2", "step 2) CAM: press C | c to show camera image");
-    guih->addTextArea("helpText3", "step 3) GAME: press J | j | G | g to adjust game");
-    guih->addTextArea("helpText4", "step 4) GRID: press I | i to show the game's grid");
-    guih->addTextArea("helpText5", "step 5) BUTTONS: press B | b to show buttons adjustments");
-
-    guih->autoSizeToFitWidgets();
-    ofAddListener(guih->newGUIEvent,this,&ofApp::guiEvent);
-
-    guih->setVisible(false);
-
-
-    // CAMERA SENSOR before gui camera
-    camID = 1;
-    camWidth = 320;
-    camHeight = 240;
-    bflipV = 0;
-    bflipH = 1;
-    minArea = 3;
-    maxArea = 500;
-
-    // GUI CAMERA
-    guiw = new ofxUICanvas(20+20+APP_WIDTH*0.4, 20, APP_WIDTH*0.5, APP_HEIGT*0.9);
-    guiw->addLabel(":: CAMERA CORNERS CROP ::", OFX_UI_FONT_MEDIUM);
-
-    camWidthPorc = camWidth*0.5;
-    camHeightPorc = camHeight*0.5;
-    guiw->add2DPad("top left", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[0], camWidthPorc, camHeightPorc);
-    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-    guiw->add2DPad("top right", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[3], camWidthPorc, camHeightPorc);
-    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
-    guiw->add2DPad("botom left", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[1], camWidthPorc, camHeightPorc);
-    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
-    guiw->add2DPad("botom right", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[2], camWidthPorc, camHeightPorc);
-    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
-    guiw->addLabelButton("reset full camera view", false);
-
-    guiw->autoSizeToFitWidgets();
-    ofAddListener(guiw->newGUIEvent,this,&ofApp::guiEvent);
-    guiw->loadSettings("LightJumper_Warp_Camera.xml");
-
-    bshowImagesAndContours = false;
-    bshowCamera = false;
-
-    guiw->setVisible(false);
-
-    // CAMERA SENSOR
-    puntsDst[0].x = 0.0f;
-    puntsDst[0].y = 0.0f;
-    puntsDst[1].x = 0.0f;
-    puntsDst[1].y = (float)camHeight;
-    puntsDst[2].x = (float)camWidth;
-    puntsDst[2].y = (float)camHeight;
-    puntsDst[3].x = (float)camWidth;
-    puntsDst[3].y = 0.0f;
-
-    vector<ofVideoDevice> devices = vidGrabber.listDevices();
-
-    ofLogNotice() << "------------------------------------------";
-    ofLogNotice() << "CAMERAS sensor, trobades: " << devices.size();
-    for(int i = 0; i < devices.size(); i++){
-        ofLogNotice() << "  " << devices[i].id << ": " << devices[i].deviceName;
-        if( devices[i].bAvailable ){
-            ofLogNotice() << " - available ";
-        }
-        else{
-            ofLogNotice() << " - UNavailable ";
-        }
-    }
-    ofLogNotice() << "SETTING UP cam id: " << camID << " width: " << camWidth << " height: " << camHeight;
-    ofLogNotice() << "------------------------------------------";
-
-    vidGrabber.setDeviceID(camID);
-    vidGrabber.setVerbose(true);
-    vidGrabber.setDesiredFrameRate(30);
-    vidGrabber.initGrabber(camWidth,camHeight);
-
-    // OPENCV
-    colorImg.allocate(camWidth, camHeight);
-    colorImgFliped.allocate(camWidth, camHeight);
-    grayImage.allocate(camWidth, camHeight);
-    grayImageWarped.allocate(camWidth, camHeight);
-    grayImageTh.allocate(camWidth, camHeight);
-
-    // MAPING DE CAMERA VALORS ENTRE 0 i 1
-    relAspectWidth = 1.0/camWidth;
-    relAspectHeight = 1.0/camHeight;
+    // DEBUG
+    setupDebugGUI();
+    setupCamera();
 
     // PARTIDA
     setVariablesIniciPartida();
@@ -528,8 +368,6 @@ void ofApp::draw(){
     warper.draw();
 
     // APP
-    ofBackground(0);
-    ofSetColor(255);
     ofSetWindowTitle("Light Jumper running at " + ofToString((int)ofGetFrameRate()) + " frames per second");
 
     // PANTALLES --------------------------------------------------------------------------
@@ -1323,4 +1161,170 @@ void ofApp::drawEnd(){
     ofSetColor(255);
     saltingTypo.drawString(s,0,0);
     ofPopMatrix();
+}
+
+void ofApp::setupCamera() {
+
+    // CAMERA SENSOR
+    puntsDst[0].x = 0.0f;
+    puntsDst[0].y = 0.0f;
+    puntsDst[1].x = 0.0f;
+    puntsDst[1].y = (float)camHeight;
+    puntsDst[2].x = (float)camWidth;
+    puntsDst[2].y = (float)camHeight;
+    puntsDst[3].x = (float)camWidth;
+    puntsDst[3].y = 0.0f;
+
+    vector<ofVideoDevice> devices = vidGrabber.listDevices();
+
+    ofLogNotice() << "------------------------------------------";
+    ofLogNotice() << "CAMERAS sensor, trobades: " << devices.size();
+    for(int i = 0; i < devices.size(); i++){
+        ofLogNotice() << "  " << devices[i].id << ": " << devices[i].deviceName;
+        if( devices[i].bAvailable ){
+            ofLogNotice() << " - available ";
+        }
+        else{
+            ofLogNotice() << " - UNavailable ";
+        }
+    }
+    ofLogNotice() << "SETTING UP cam id: " << camID << " width: " << camWidth << " height: " << camHeight;
+    ofLogNotice() << "------------------------------------------";
+
+    vidGrabber.setDeviceID(camID);
+    vidGrabber.setVerbose(true);
+    vidGrabber.setDesiredFrameRate(30);
+    vidGrabber.initGrabber(camWidth,camHeight);
+
+    // OPENCV
+    colorImg.allocate(camWidth, camHeight);
+    colorImgFliped.allocate(camWidth, camHeight);
+    grayImage.allocate(camWidth, camHeight);
+    grayImageWarped.allocate(camWidth, camHeight);
+    grayImageTh.allocate(camWidth, camHeight);
+
+    // MAPING DE CAMERA VALORS ENTRE 0 i 1
+    relAspectWidth = 1.0/camWidth;
+    relAspectHeight = 1.0/camHeight;
+
+}
+
+void ofApp::setupDebugGUI() {
+
+    // BOTONS
+    guib = new ofxUICanvas(20, 20, APP_WIDTH*0.3, APP_HEIGT*0.9);
+    guib->addLabel(":: BOTONS ::", OFX_UI_FONT_MEDIUM);
+    guib->addSpacer();
+
+    //Boto Start
+    guib->addIntSlider("botoStartX", 0, APP_WIDTH, &botoStart.botoX)->setIncrement(1);
+    guib->addIntSlider("botoStartY", 0, APP_HEIGT, &botoStart.botoY)->setIncrement(1);
+
+    //Boto High_scores
+    guib->addIntSlider("botoHighScoresX", 0, APP_WIDTH, &botoHighScores.botoX)->setIncrement(1);
+    guib->addIntSlider("botoHighScoresY", 0, APP_HEIGT, &botoHighScores.botoY)->setIncrement(1);
+
+    //Boto Instructions
+    guib->addIntSlider("botoInstructionsX", 0, APP_WIDTH, &botoInstructions.botoX)->setIncrement(1);
+    guib->addIntSlider("botoInstructionsY", 0, APP_HEIGT, &botoInstructions.botoY)->setIncrement(1);
+
+    //Boto Back
+    guib->addIntSlider("botoBackX", 0, APP_WIDTH, &botoBack.botoX)->setIncrement(1);
+    guib->addIntSlider("botoBackY", 0, APP_HEIGT, &botoBack.botoY)->setIncrement(1);
+
+    //Boto Return
+    guib->addIntSlider("botoReturnX", 0, APP_WIDTH, &botoReturn.botoX)->setIncrement(1);
+    guib->addIntSlider("botoReturnY", 0, APP_HEIGT, &botoReturn.botoY)->setIncrement(1);
+
+    guib->autoSizeToFitWidgets();
+    ofAddListener(guib->newGUIEvent,this,&ofApp::guiEvent);
+    guib->loadSettings("LightJumper_Botons.xml");
+
+    guib->setVisible(false);
+
+    // GRID
+    myGrid.setup();
+    myGrid.gridActivaExcepteMargesSupInfDretaEsq();
+
+    // GUI APP
+    guia = new ofxUICanvas(20, 20, APP_WIDTH*0.4, APP_HEIGT*0.9);
+
+    guia->addLabel(":: LIGHT JUMPER SETTINGS ::", OFX_UI_FONT_MEDIUM);
+    guia->addSpacer();
+
+    guia->addSpacer();
+    guia->addLabelButton("load factory defaults", false);
+
+    guia->addSpacer();
+    guia->addLabel("GAME IMAGE CORNERS", OFX_UI_FONT_MEDIUM);
+    guia->addLabelButton("reset corners", false);
+
+    guia->addSpacer();
+    guia->addLabel("SENSOR SENSIBILITY", OFX_UI_FONT_MEDIUM);
+    guia->addIntSlider("sensibility", 0, 255, &threshold);
+
+    guia->addSpacer();
+    guia->addLabel("4 GAME CONTROLLERS POSITION", OFX_UI_FONT_MEDIUM);
+    guia->addSlider("enlarge gamer", 0.0, 10.0, &ampliaHeight);
+    guia->addSlider("adjustment up-down", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &baixaHoTotAvall);
+    guia->addSlider("adjustment left-right", -1.5*APP_WIDTH, 1.5*APP_WIDTH, &mouHoTotDretaEsq);
+
+    guia->autoSizeToFitWidgets();
+    ofAddListener(guia->newGUIEvent,this,&ofApp::guiEvent);
+    guia->loadSettings("LightJumper_Deteccio.xml");
+
+    guia->setVisible(false);
+
+    // HELP
+    guih = new ofxUICanvas(20, 20, APP_WIDTH*0.5, APP_HEIGT*0.9);
+
+    guih->addLabel(":: HELP ::", OFX_UI_FONT_MEDIUM);
+    guih->addSpacer();
+    guih->addFPS();
+    guih->addSpacer();
+    guih->addTextArea("helpText1", "step 1) WARP: press W | w and mouse click and drag to adjust game's image corners");
+    guih->addTextArea("helpText2", "step 2) CAM: press C | c to show camera image");
+    guih->addTextArea("helpText3", "step 3) GAME: press J | j | G | g to adjust game");
+    guih->addTextArea("helpText4", "step 4) GRID: press I | i to show the game's grid");
+    guih->addTextArea("helpText5", "step 5) BUTTONS: press B | b to show buttons adjustments");
+
+    guih->autoSizeToFitWidgets();
+    ofAddListener(guih->newGUIEvent,this,&ofApp::guiEvent);
+
+    guih->setVisible(false);
+
+
+    // CAMERA SENSOR before gui camera
+    camID = 0;
+    camWidth = 320;
+    camHeight = 240;
+    bflipV = 0;
+    bflipH = 1;
+    minArea = 3;
+    maxArea = 500;
+
+    // GUI CAMERA
+    guiw = new ofxUICanvas(20+20+APP_WIDTH*0.4, 20, APP_WIDTH*0.5, APP_HEIGT*0.9);
+    guiw->addLabel(":: CAMERA CORNERS CROP ::", OFX_UI_FONT_MEDIUM);
+
+    camWidthPorc = camWidth*0.5;
+    camHeightPorc = camHeight*0.5;
+    guiw->add2DPad("top left", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[0], camWidthPorc, camHeightPorc);
+    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
+    guiw->add2DPad("top right", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[3], camWidthPorc, camHeightPorc);
+    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
+    guiw->add2DPad("botom left", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[1], camWidthPorc, camHeightPorc);
+    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_RIGHT);
+    guiw->add2DPad("botom right", ofPoint(0,camWidth), ofPoint(0,camHeight), &puntsSrc[2], camWidthPorc, camHeightPorc);
+    guiw->setWidgetPosition(OFX_UI_WIDGET_POSITION_DOWN);
+    guiw->addLabelButton("reset full camera view", false);
+
+    guiw->autoSizeToFitWidgets();
+    ofAddListener(guiw->newGUIEvent,this,&ofApp::guiEvent);
+    guiw->loadSettings("LightJumper_Warp_Camera.xml");
+
+    bshowImagesAndContours = false;
+    bshowCamera = false;
+
+    guiw->setVisible(false);
 }

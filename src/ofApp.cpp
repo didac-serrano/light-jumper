@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    fons_inici.loadImage("start-background.jpg");
+    fons_inici.loadImage("start-background.png");
     fons_scores.loadImage("score-background.jpg");
     // APP
     //ofSetFullscreen(true);
@@ -42,12 +42,12 @@ void ofApp::setup(){
     punterHeightMig = punter.getHeight()*0.5;
 
     // COLOR JOC
-    saltingBlue = ofColor(0,0,255);
+    saltingBlue = ofColor(255,255,255);
 
     // TYPO
-	ofTrueTypeFont::setGlobalDpi(115);
-	saltingTypo.loadFont("GlametrixBold.otf", 27, true, true); // temps nivell i normal, kids, pro
-	saltingTypo.setLetterSpacing(1);
+	saltingTypo.loadFont("Verdana.fttf", 25, true, true);
+	saltingTypo.setLineHeight(14.0f);
+	saltingTypo.setLetterSpacing(1.037);
 
     // PECES
     comptadorPeces = 0;
@@ -484,8 +484,6 @@ void ofApp::draw(){
     warper.draw();
 
     // APP
-    ofBackground(0);
-    ofSetColor(255);
     ofSetWindowTitle("Light Jumper running at " + ofToString((int)ofGetFrameRate()) + " frames per second");
 
     // PANTALLES --------------------------------------------------------------------------

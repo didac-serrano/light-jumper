@@ -43,6 +43,7 @@ class ofApp : public ofBaseApp{
         void setVariablesIniciPartida(); // endreçat
         void drawPuntuacio();
         void drawEnd();
+
        // void drawBackground();
         ofImage fons_inici;
         ofImage boto_start;

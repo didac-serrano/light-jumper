@@ -22,6 +22,7 @@
 
 #define IDLE_TIMER_PECA                 240
 #define TOCADA_TIMER_PECA               30
+#define BEAT_TIMER_PECA                 140
 
 enum pantallesJoc{
     START,

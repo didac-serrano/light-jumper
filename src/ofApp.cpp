@@ -149,7 +149,7 @@ void ofApp::setup(){
 
 
     // CAMERA SENSOR before gui camera
-    camID = 1;
+    camID = 0;
     camWidth = 320;
     camHeight = 240;
     bflipV = 0;
@@ -260,7 +260,6 @@ void ofApp::setupMusic(string filename) {
         cout << "Unable to open song level file :(";
         std::exit(1); // terminate with error
     }
-
     while (levelFile >> positionMs) {
         songPeaks.push_back(positionMs);
     }
@@ -310,7 +309,9 @@ void ofApp::update(){
 
         if(botoStart.botoSeleccionat == true){ // CANVI A pantallaJoc = PLAY;
             pantallaJoc = PLAY;
+            soundPlayer.play();
             jocMinutsTimer.startTimer();
+            nextSongPeakIndex = 0;
             setupPeces();
         }
 
@@ -682,7 +683,7 @@ void ofApp::keyPressed(int key){
         myfile.open("newLevel.txt");
         myfile << gameLevel;
         myfile.close();
-     }
+    }
 }
 
 //--------------------------------------------------------------
@@ -812,6 +813,7 @@ void ofApp::setupPeces(){
         peca.bpecaActiva = false;
         peca.idleTimer = IDLE_TIMER_PECA;
         peca.tocadaTimer = TOCADA_TIMER_PECA;
+        peca.onBeatTimer = BEAT_TIMER_PECA;
         peces.push_back(peca);
         //cout<<i<<"-"<<dtAux<<endl;
     }
@@ -874,11 +876,26 @@ void ofApp::updatePeces(){
         }
         else it++;
     }
+    bool onBeat = isOnBeat();
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, onBeat);
     }
 
+}
+
+bool ofApp::isOnBeat() {
+    // return jocMinutsTimer.getTime == songPeaks.
+    int timeElapsed = (MAX_GAME_TIME*60*1000) - jocMinutsTimer.getTimeLeftInMillis();
+    //cout << "songpeak: " << songPeaks.at(nextSongPeakIndex);
+    //cout << " /  " << timeElapsed << endl;
+
+    if((songPeaks.at(nextSongPeakIndex) + 30) >= timeElapsed && ((songPeaks.at(nextSongPeakIndex) - 30) <= timeElapsed)) {
+        //cout << "oye we found it!!!!!!!!!!!!!!!!!!!" << endl;
+        nextSongPeakIndex++;
+        return true;
+    }
+    return false;
 }
 
 void ofApp::updatePecesTut1()
@@ -896,7 +913,7 @@ void ofApp::updatePecesTut1()
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, false);
     }
 }
 
@@ -915,7 +932,7 @@ void ofApp::updatePecesTut2()
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, false);
         //it->pecaPos = it->pecaPos.dot(it->speed);
         it->pecaPos = (it->pecaPos + (it->speed));
     }

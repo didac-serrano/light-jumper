@@ -12,6 +12,7 @@ enum estatsPeca{
     APAREIX,
     ACTIVA,
     IDLE,
+    ONBEAT,
     TOCADA,
     DESAPAREIX,
     THE_END,
@@ -36,6 +37,7 @@ public:
     int pecaNumGraella;
     float idleTimer;
     float tocadaTimer;
+    float onBeatTimer;
     ofVec2f pecaPos;
 
     bool bpecaActiva;

@@ -98,6 +98,7 @@ class ofApp : public ofBaseApp{
         void updatePeces();
         void updatePecesTut1();
         void updatePecesTut2();
+        bool isOnBeat();
 
         //DRAWs
         void drawPeces();
@@ -175,6 +176,7 @@ class ofApp : public ofBaseApp{
         // MUSIC PLAYER
         ofSoundPlayer soundPlayer;
         vector<int> songPeaks;
+        int nextSongPeakIndex;
         void setupMusic(string filename);
         string gameLevel = "";
 

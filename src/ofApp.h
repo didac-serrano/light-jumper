@@ -14,6 +14,7 @@
 #include "botons/botoDonut.h"
 #include "peces/pecaEmpty.h"
 #include <string>
+#include "math.h"
 
 class ofApp : public ofBaseApp{
 
@@ -32,8 +33,6 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-        void setupTutorial1();
-        void updatePecesTut1();
 
         // APP
         Singleton *singleton; // PUNTUACIÓ jugador
@@ -63,7 +62,8 @@ class ofApp : public ofBaseApp{
 
         // TEMPS DE JOC
         ofxTimer jocMinutsTimer;
-        ofxTimer Tuto1Timer;
+        ofxTimer TutoTimer;
+        ofxTimer duradaTheEndTimer;
         float jocMinutsTimerSegonsLeft;
         int jocMinutsTimerMinuts;
         int jocMinutsTimerSegons;
@@ -71,9 +71,8 @@ class ofApp : public ofBaseApp{
 		ofColor saltingBlue;
 		ofTrueTypeFont	saltingTypo;
 
-		// TEMPS DE PANTALLA FINAL
-		ofxTimer duradaTheEndTimer;
         bool revisat;
+
         //--------------------------------------------------------------
         // PUNTER
         ofImage punter;
@@ -88,20 +87,28 @@ class ofApp : public ofBaseApp{
        //vector<botoEmpty> botonsTut;
         vector<pecaEmpty> pecesMovTut;
 
-
-        void setupPeca1();
+        //SETUPs
         void setupPeces();
+        void setupTutorial1();
+        void setupTutorial2();
+
+        //UPDATEs
         void updatePeces();
+        void updatePecesTut1();
+        void updatePecesTut2();
+
+        //DRAWs
         void drawPeces();
         void drawStart();
         void drawHighScores();
         void drawInstructions();
         void drawReturn();
-        void actualitzaPuntsEmpty(int & e);
-        void actualitzaPuntsEmpty_tut1(int & e);
         void drawScoreList();
         void drawBack();
         void drawTut1Msg();
+
+        void actualitzaPuntsEmpty(int & e);
+
         //--------------------------------------------------------------
         // DETECCIÓ
         float relAspectWidth; // detecció

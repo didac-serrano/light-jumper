@@ -15,7 +15,19 @@ void pecaEmpty::setup(int _id, int _numgrid, ofVec2f _pos, int _radi, float _dis
     bdrawInfoHelp = false;
     alfaPeca = 0;
     distanceInTime = _distT;
+}
 
+void pecaEmpty::setups(int _id, int _numgrid, ofVec2f _pos, int _radi, float _distT, ofVec2f _speed){
+    pecaBase::setup(_id, _numgrid, _pos, _radi);
+    puntuacioPeca = 1;
+
+    // ESTAT
+    estatPeca = SETUP;
+    estatPecaNext = SETUP;
+    bdrawInfoHelp = false;
+    alfaPeca = 0;
+    distanceInTime = _distT;
+    speed = _speed;
 }
 
 void pecaEmpty::init(int id, int numgrid, ofVec2f pos){

@@ -1,12 +1,8 @@
 #include "pecaBase.h"
 
-pecaBase::pecaBase(){
+pecaBase::pecaBase(){}
 
-}
-
-pecaBase::~pecaBase(){
-
-}
+pecaBase::~pecaBase(){}
 
 void pecaBase::setup(int id, int numgrid, ofVec2f pos, int radi){
     // PEÇA
@@ -24,7 +20,7 @@ void pecaBase::update(int total, ofVec2f pos[MAX_NUM_BLOBS]){
     if(bpecaActiva){
         // DETECCIO
         for(int i=0; i<total; i++){
-            if(estatPeca == IDLE){
+            if(estatPeca == IDLE || estatPeca == ONBEAT){
                 if(isInside(pos[i].x, pos[i].y)){
                     estatPeca = CANVIA_ESTAT;
                     estatPecaNext = TOCADA;
@@ -37,7 +33,7 @@ void pecaBase::update(int total, ofVec2f pos[MAX_NUM_BLOBS]){
 void pecaBase::updatem(ofVec2f pos){
     // MOUSE
     if(bpecaActiva){
-        if(estatPeca == IDLE){
+        if(estatPeca == IDLE || estatPeca == ONBEAT){
             if(isInside(pos.x, pos.y)){
                 estatPeca = CANVIA_ESTAT;
                 estatPecaNext = TOCADA;

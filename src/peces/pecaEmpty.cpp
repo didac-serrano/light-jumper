@@ -36,7 +36,7 @@ void pecaEmpty::init(int id, int numgrid, ofVec2f pos){
     pecaPos = pos;
 }
 
-void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
+void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS], bool onBeat){
     pecaBase::update(_total, _pos);
 
     // ESTATS PEÇA I RAIG
@@ -62,7 +62,7 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
 
     }
     else if(estatPeca == APAREIX){
-        alfaPeca +=(255/10);
+        alfaPeca+=(255/10);
         if(alfaPeca >= 255){
             estatPeca = CANVIA_ESTAT;
             estatPecaNext = ACTIVA;
@@ -78,6 +78,19 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
             estatPeca = CANVIA_ESTAT;
             estatPecaNext = DESAPAREIX;
         }
+        else if(onBeat){
+            estatPeca = CANVIA_ESTAT;
+            estatPecaNext = ONBEAT;
+            puntuacioPeca = 3;
+        }
+    }
+    else if(estatPeca == ONBEAT){
+        onBeatTimer-=1;
+        if(onBeatTimer<=0) {
+            estatPeca = CANVIA_ESTAT;
+            estatPecaNext = IDLE;
+            puntuacioPeca = 1;
+        }
     }
     else if(estatPeca == TOCADA){
         tocadaTimer-=1;
@@ -87,7 +100,7 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
         }
     }
     else if(estatPeca == DESAPAREIX){
-        alfaPeca -=(255/10);
+        alfaPeca-=(255/10);
         if(alfaPeca <= 0){
             estatPeca = CANVIA_ESTAT;
             estatPecaNext = THE_END;
@@ -95,10 +108,9 @@ void pecaEmpty::update(int _total, ofVec2f _pos[MAX_NUM_BLOBS]){
     }
     else if(estatPeca == THE_END){
         estatPeca = CANVIA_ESTAT;
-        //estatPecaNext = SETUP;
     }
-
 }
+
 /*
 void pecaEmpty::draw(){
     // PEÇA
@@ -197,6 +209,12 @@ void pecaEmpty::draw(){
         ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-45);
         ofSetColor(145,145*(idleTimer/IDLE_TIMER_PECA),10*(idleTimer/IDLE_TIMER_PECA),alfaPeca);
         ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio-50);
+        ofPopStyle();
+    }
+    else if(estatPeca == ONBEAT){
+        ofPushStyle();
+        ofSetColor(255,0,144,alfaPeca);
+        ofCircle(pecaPos.x, pecaPos.y, pecaRadiDeteccio);
         ofPopStyle();
     }
     else if(estatPeca == TOCADA){

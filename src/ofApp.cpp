@@ -27,11 +27,11 @@ void ofApp::setup(){
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
 
-    tutoTimer.setup(18000, false); // 18 segons
+    tutoTimer.setup(30000, false); // 30 segons
     tutoTimer.stopTimer();
     duradaTheEndTimer.setup(5000, false); // 5 segons
     duradaTheEndTimer.stopTimer();
-    shortTimer.setup(2000, false); // 2 segons
+    shortTimer.setup(2800, false); // 2.8 segons
     shortTimer.stopTimer();
 
     // WARPER
@@ -263,7 +263,6 @@ void ofApp::setupMusic(string filename) {
         cout << "Unable to open song level file :(";
         std::exit(1); // terminate with error
     }
-
     while (levelFile >> positionMs) {
         songPeaks.push_back(positionMs);
     }
@@ -313,7 +312,9 @@ void ofApp::update(){
 
         if(botoStart.botoSeleccionat == true){ // CANVI A pantallaJoc = PLAY;
             pantallaJoc = PLAY;
+            soundPlayer.play();
             jocMinutsTimer.startTimer();
+            nextSongPeakIndex = 0;
             setupPeces();
         }
 
@@ -344,7 +345,7 @@ void ofApp::update(){
         botoReturn.update(totalBlobsDetected, posicionsBlobs);
         botoReturn.updatem(warpMousePos);
 
-        if (singleton->getPuntuacioJugador()==5 || tutoTimer.isTimerFinished()) {
+        if (singleton->getPuntuacioJugador()==8 || tutoTimer.isTimerFinished()) {
             shortTimer.startTimer();
             tutoTimer.reset();
             tutoTimer.stopTimer();
@@ -462,9 +463,11 @@ void ofApp::update(){
                     pantallaJoc = TUTORIAL_3;
                     tutoTimer.startTimer();
                     tuto_phase = 3;
-                    break;/*
+                    break;
                 case(3):
-                    pantallaJoc = TUTORIAL_4;
+                    pantallaJoc = START;
+                    tuto_phase = 1;
+                    /*
                 case(4):
                     pantallaJoc = TUTORIAL_5;*/
             }
@@ -570,7 +573,7 @@ void ofApp::draw(){
     else if(pantallaJoc == TUTORIAL_1 || pantallaJoc == TUTORIAL_2 || pantallaJoc == TUTORIAL_3) {
         ofSetColor(0, 0, 77);
         ofFill();
-        ofRect(0,0, APP_WIDTH, APP_HEIGT);
+        ofRect(0, 0, APP_WIDTH, APP_HEIGT);
         botoReturn.draw(255,255,255, 0, 0);
         drawReturn();
         drawTutMsg();
@@ -724,7 +727,7 @@ void ofApp::keyPressed(int key){
         myfile.open("newLevel.txt");
         myfile << gameLevel;
         myfile.close();
-     }
+    }
 }
 
 //--------------------------------------------------------------
@@ -854,6 +857,7 @@ void ofApp::setupPeces(){
         peca.bpecaActiva = false;
         peca.idleTimer = IDLE_TIMER_PECA;
         peca.tocadaTimer = TOCADA_TIMER_PECA;
+        peca.onBeatTimer = BEAT_TIMER_PECA;
         peces.push_back(peca);
         //cout<<i<<"-"<<dtAux<<endl;
     }
@@ -863,11 +867,11 @@ void ofApp::setupTutorial1(){
     //Fase 1 <idle dots>
     int g = 0;
     float dtAux = 3;
-    int offsetArray[] = {10, 25, 66, 52, 21};
-    for(int i=0; i<5; i++) {
+    int offsetArray[] = {10, 25, 66, 52, 21, 40, 29, 47};
+    for(int i=0; i<8; i++) {
         pecaEmpty peca;
         peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
-        dtAux += 3;
+        dtAux += 2;
         g = offsetArray[i];
         cout<<dtAux<<endl;
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
@@ -884,7 +888,7 @@ void ofApp::setupTutorial2(){
     //Fase 2 <moving dots>
     int g = 0;
     float dtAux = 3;
-    int offsetArray[] = {10, 25, 66, 52, 21, 24, 36, 45};
+    int offsetArray[] = {22, 30, 41, 32, 38, 20, 48, 40};
     for(int i=0; i<8; i++) {
         pecaEmpty peca;
         float angle = ofRandom(-3.14,3.14);
@@ -905,18 +909,16 @@ void ofApp::setupTutorial2(){
 }
 
 void ofApp::setupTutorial3(){
-    //Fase 2 <moving dots>
-
-
+    //Fase 3 <moving dots & still dots>
     int g = 0;
     float dtAux = 3;
-    int offsetArray[] = {30, 6, 43, 70, 62, 72, 79};
+    int offsetArray[] = {22, 30, 56, 32, 38, 20, 48};
     for(int i=0; i<7; i++) {
         pecaEmpty peca;
         peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
-        dtAux += 3;
+        dtAux += 3 + ofRandom(0.5,2);
         g = offsetArray[i];
-        cout<<dtAux<<endl;
+        //cout<<dtAux<<endl;
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
         peca.estatPeca = CANVIA_ESTAT;
         peca.estatPecaNext = APAREIX;
@@ -926,11 +928,9 @@ void ofApp::setupTutorial3(){
         pecesTut.push_back(peca);
     }
 
-
-
     g = 0;
-    dtAux = 3;
-    int offsetArray2[] = {10, 25, 66, 52, 21, 24, 36, 45};
+    dtAux = 6;
+    int offsetArray2[] = {12, 23, 40, 52, 21, 41, 50, 31};
     ofVec2f speed;
     for(int i=0; i<sizeof(offsetArray2)/sizeof(offsetArray2[0]); i++) {
         pecaEmpty peca;
@@ -971,7 +971,7 @@ void ofApp::setupTutorial3(){
         }
 
         peca.setups(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,speed);
-        dtAux += 2;
+        dtAux += 2 + ofRandom(0.5,2);
         g = offsetArray2[i];
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
         peca.estatPeca = CANVIA_ESTAT;
@@ -982,8 +982,6 @@ void ofApp::setupTutorial3(){
         pecesMovTut.push_back(peca);
     }
 }
-
-
 
 void ofApp::updatePeces(){
     pecaEmpty aux;
@@ -997,11 +995,25 @@ void ofApp::updatePeces(){
         }
         else it++;
     }
+    bool onBeat = isOnBeat();
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, onBeat);
     }
 
+}
+
+bool ofApp::isOnBeat() {
+    int timeElapsed = (MAX_GAME_TIME*60*1000) - jocMinutsTimer.getTimeLeftInMillis();
+    //cout << "songpeak: " << songPeaks.at(nextSongPeakIndex);
+    //cout << " /  " << timeElapsed << endl;
+
+    if((songPeaks.at(nextSongPeakIndex) + 30) >= timeElapsed && ((songPeaks.at(nextSongPeakIndex) - 30) <= timeElapsed)) {
+        //cout << "oye we found it!!!!!!!!!!!!!!!!!!!" << endl;
+        nextSongPeakIndex++;
+        return true;
+    }
+    return false;
 }
 
 void ofApp::updatePecesTut1()
@@ -1019,7 +1031,7 @@ void ofApp::updatePecesTut1()
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, false);
     }
 }
 
@@ -1038,7 +1050,7 @@ void ofApp::updatePecesTut2()
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, false);
         //it->pecaPos = it->pecaPos.dot(it->speed);
         it->pecaPos = (it->pecaPos + (it->speed));
     }
@@ -1057,12 +1069,11 @@ void ofApp::updatePecesTut3()
         }
         else it++;
     }
+    bool onBeat = isOnBeat();
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, false);
     }
-
-
 
     for(it = pecesMovTut.begin(); it != pecesMovTut.end(); ) {
         if(it->distanceInTime<=tutoTimer.getTime()) {
@@ -1075,13 +1086,13 @@ void ofApp::updatePecesTut3()
     }
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
-        it->update(totalBlobsDetected, posicionsBlobs);
+        it->update(totalBlobsDetected, posicionsBlobs, false);
         //it->pecaPos = it->pecaPos.dot(it->speed);
         it->pecaPos = (it->pecaPos + 3*(it->speed));
     }
 }
 
-
+/*
 void ofApp::updatePecesTut4()
 {
     pecaEmpty aux;
@@ -1099,7 +1110,7 @@ void ofApp::updatePecesTut4()
         it->updatem(warpMousePos);
         it->update(totalBlobsDetected, posicionsBlobs);
     }
-}
+}*/
 
 
 void ofApp::drawPeces() {
@@ -1207,7 +1218,6 @@ void ofApp::drawBack(){
 
 void ofApp::drawTutMsg(){
     ofRectangle start;
-
     switch(pantallaJoc)
     {
         case(TUTORIAL_1):
@@ -1215,9 +1225,9 @@ void ofApp::drawTutMsg(){
             ofPushMatrix();
             ofTranslate(220,75);
             ofSetColor(saltingBlue);
-            saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/5)",0,0);
+            saltingTypo.drawString("Touch the dots! (" + ofToString(singleton->getPuntuacioJugador()) + "/8)",0,0);
             ofPopMatrix();
-            max_score_tutorial = 5;
+            max_score_tutorial = 8;
             current_score_tutorial = singleton->getPuntuacioJugador();
             break;
         case(TUTORIAL_2):
@@ -1240,9 +1250,7 @@ void ofApp::drawTutMsg(){
             max_score_tutorial = 15;
             current_score_tutorial = singleton->getPuntuacioJugador();
             break;
-
     }
-
 }
 
 void ofApp::drawSkipMessage(int tuto_phase){
@@ -1265,9 +1273,9 @@ void ofApp::drawSkipMessage(int tuto_phase){
         ofSetColor(saltingBlue);
         saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) + "\n\n\t      It could be better!",0,0);
         ofPopMatrix();
-        
+
     }
-    
+
 
 }
 
@@ -1305,8 +1313,7 @@ void ofApp::drawReturn(){
 }
 
 //--------------------------------------------------------------
-void ofApp::drawEnd()
-{
+void ofApp::drawEnd(){
     int aux = NUM_PECES_TOTAL;
     string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + "/" + ofToString(aux) + " POINTS";
     ofRectangle rs;

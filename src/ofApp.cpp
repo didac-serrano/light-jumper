@@ -20,14 +20,14 @@ void ofApp::setup(){
     singleton = Singleton::getInstance();
 
     // MUSIC
-    soundPlayer.loadSound("LipsAreMovin.mp3");
-    setupMusic("lipsAreMovinLevel");
+    soundPlayer.loadSound("DoIWannaKnow.mp3");
+    setupMusic("levelDoIWannaKnow.txt");
 
     // TEMPS DE JOC
-	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
+	jocMinutsTimer.setup(MAX_GAME_TIME*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
 
-    tutoTimer.setup(30000, false); // 30 segons
+    tutoTimer.setup(24000, false); // 30 segons
     tutoTimer.stopTimer();
     duradaTheEndTimer.setup(5000, false); // 5 segons
     duradaTheEndTimer.stopTimer();
@@ -98,7 +98,7 @@ void ofApp::setVariablesIniciPartida(){
 void ofApp::setupMusic(string filename) {
     ifstream levelFile;
     int positionMs;
-    levelFile.open("lipsAreMovinLevel.txt");
+    levelFile.open("levelDoIWannaKnow.txt");
     if (!levelFile) {
         cout << "Unable to open song level file :(";
         std::exit(1); // terminate with error
@@ -384,7 +384,7 @@ void ofApp::draw(){
 
     else if(pantallaJoc == PLAY){
         // FONS
-        ofSetColor(102, 102, 255);
+        ofSetColor(0,0,0);
         ofFill();
         ofRect(0,0, APP_WIDTH, APP_HEIGT);
         drawTemps();
@@ -654,41 +654,21 @@ void ofApp::guiEvent(ofxUIEventArgs &e){
     }
 }
 
-
-void ofApp::setupPeces(){
+int ofApp::setupPatron1(int offset){
     int g = 0;
-    int offs = 0;
-    int offs2 = 0;
-    int offsetArray[] = { 10, 11, 12, 19, 20, 21, 28, 29, 30, 14, 15, 16, 23, 24, 25,
-    32, 33, 34, 46, 47, 48, 55, 56, 57, 64, 65, 66, 50, 51, 52, 59, 60, 61, 68, 69, 70};
+    int midColArray[] = { 13, 31, 49, 67 };
+    int pairLinesArray[] = { 10, 16, 28, 34, 46, 52, 64, 70 };
+    ofVec2f speed;
+    speed.x = 0;
+    speed.y = 0;
 
-    // intent d'init de peces
-    float dtAux = 0;
-    for(int i=0; i<NUM_PECES_TOTAL; i++) {
+    float dtAux = offset;
+    //setup patron 1 - punts centrals
+    for(int i=0; i<8; i++) {
         pecaEmpty peca;
-        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
-        dtAux += 60/float(NUM_PECES_MIN);
-        if (i % 4 == 0){
-            offs = 0;
-            offs2 = 8;
-        }
-        else if (i % 3 == 0){
-            offs = 9;
-            offs2 = 17;
-        }
-        else if (i % 2 == 0){
-            offs = 18;
-            offs2 = 26;
-        }
-        else{
-            offs = 27;
-            offs2 = 35;
-        }
-
-        do{
-            g = (int)ofRandom(offs, offs2);
-            g = offsetArray[g];
-        } while(myGrid.brectGridActiu[g] == false);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,0,0,speed);
+        dtAux += 4*BEAT_DIST_MS;
+        g = midColArray[i%4];
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
         peca.estatPeca = CANVIA_ESTAT;
         peca.estatPecaNext = APAREIX;
@@ -697,8 +677,455 @@ void ofApp::setupPeces(){
         peca.tocadaTimer = TOCADA_TIMER_PECA;
         peca.onBeatTimer = BEAT_TIMER_PECA;
         peces.push_back(peca);
-        //cout<<i<<"-"<<dtAux<<endl;
     }
+
+    dtAux = offset+(2*BEAT_DIST_MS); //-10 ms adjust
+    //setup patron 1 - punts perifery
+    for(int i=0; i<16; i++) {
+        pecaEmpty peca;
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,0,0,speed);
+        if(i%2 != 0) {
+                dtAux += 4*BEAT_DIST_MS;
+        }
+        g = pairLinesArray[i%8];
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        peca.onBeatTimer = BEAT_TIMER_PECA;
+        peces.push_back(peca);
+    }
+    return dtAux;
+}
+
+int ofApp::setupPatron2(int offset) {
+    int g = 0;
+    int k = 0;
+    int midColArray[] = { 31, 40, 49 };
+    int shiftArrayCross[] = { -9, -1, 1, 9 };
+    int shiftArrayEx[] = { -10, -8, 8, 10};
+    ofVec2f speed;
+    speed.x = 0;
+    speed.y = 0;
+
+    float dtAux = offset;
+    //setup patron 2 - punts centrals
+    for(int i=0; i<8; i++) {
+        pecaEmpty peca;
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,0,0,speed);
+        g = midColArray[(i+1)%3];
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        peca.onBeatTimer = BEAT_TIMER_PECA;
+        peces.push_back(peca);
+
+        for(int j=0; j<4; j++){
+            if(i%2) {
+                k = g + shiftArrayCross[j];
+                switch(j){
+                    case(0):
+                        speed.x = 0;
+                        speed.y = -1;
+                    break;
+                    case(1):
+                        speed.x = -1;
+                        speed.y = 0;
+                    break;
+                    case(2):
+                        speed.x = 1;
+                        speed.y = 0;
+                    break;
+                    case(3):
+                        speed.x = 0;
+                        speed.y = 1;
+                    break;
+                }
+            }
+            else {
+                k = g + shiftArrayEx[j];
+                switch(j){
+                    case(0):
+                        speed.x = -sqrt(2)/2;
+                        speed.y = -sqrt(2)/2;
+                    break;
+                    case(1):
+                        speed.x = sqrt(2)/2;
+                        speed.y = -sqrt(2)/2;;
+                    break;
+                    case(2):
+                        speed.x = -sqrt(2)/2;
+                        speed.y = sqrt(2)/2;
+                    break;
+                    case(3):
+                        speed.x = sqrt(2)/2;
+                        speed.y = sqrt(2)/2;
+                    break;
+                }
+            }
+            peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,0,0,speed);
+            peca.init(comptadorPeces, k, myGrid.returnPosicioOfPeca(k));
+            peca.estatPeca = CANVIA_ESTAT;
+            peca.estatPecaNext = APAREIX;
+            peca.bpecaActiva = false;
+            peca.idleTimer = IDLE_TIMER_PECA;
+            peca.tocadaTimer = TOCADA_TIMER_PECA;
+            peca.onBeatTimer = BEAT_TIMER_PECA;
+            peces.push_back(peca);
+        }
+        dtAux += 4*BEAT_DIST_MS;
+        speed.x = 0;
+        speed.y = 0;
+    }
+    return dtAux;
+}
+
+int ofApp::setupPatron3(int offset) {
+    int g = 0;
+    int k = 0;
+    int topColArray[] = { 10, 11, 12, 13, 14, 15 };
+    int leftColArray[] = { 64, 55, 46, 37, 28, 19 };
+    int botColArray[] = { 70, 69, 68, 67, 66, 65 };
+    int rightColArray[] = { 16, 25, 34, 43, 52, 61 };
+    ofVec2f speed;
+
+    float dtAux = offset;
+    //setup patron 3
+    for(int i=0; i<6; i++) {
+        pecaEmpty peca;
+        for(int j=0; j<4; j++){
+            switch(j){
+                case(0):
+                    speed.x = 0;
+                    speed.y = 1;
+                    k = topColArray[i];
+                break;
+                case(1):
+                    speed.x = -1;
+                    speed.y = 0;
+                    k = rightColArray[i];
+                break;
+                case(2):
+                    speed.x = 1;
+                    speed.y = 0;
+                    k = leftColArray[i];
+                break;
+                case(3):
+                    speed.x = 0;
+                    speed.y = -1;
+                    k = botColArray[i];
+                break;
+            }
+            peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,0,0,speed);
+            peca.init(comptadorPeces, k, myGrid.returnPosicioOfPeca(k));
+            peca.estatPeca = CANVIA_ESTAT;
+            peca.estatPecaNext = APAREIX;
+            peca.bpecaActiva = false;
+            peca.idleTimer = IDLE_TIMER_PECA;
+            peca.tocadaTimer = TOCADA_TIMER_PECA;
+            peca.onBeatTimer = BEAT_TIMER_PECA;
+            peces.push_back(peca);
+        }
+        dtAux += 2.7*BEAT_DIST_MS;
+    }
+    dtAux+=4*BEAT_DIST_MS;
+    return dtAux;
+}
+
+int ofApp::setupPatron4(int offset) {
+    int g = 0;
+    int midColArray[] = { 22, 31, 40, 49, 58 };
+    ofVec2f speed;
+
+    float dtAux = offset;
+    //setup patron 4
+    for(int i=0; i<5; i++) {
+        pecaEmpty peca;
+        if(i%2){
+            speed.x = 1;
+            speed.y = 0;
+            g = midColArray[i];
+        }
+        else{
+            speed.x = -1;
+            speed.y = 0;
+            g = midColArray[i];
+        }
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,0,0,speed);
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        peca.onBeatTimer = BEAT_TIMER_PECA;
+        peces.push_back(peca);
+    }
+    return dtAux + (6*BEAT_DIST_MS);
+}
+
+int ofApp::setupPatron5(int offset) {
+    int g = 0;
+    int midColArray[] = { 38, 39, 40, 41, 42 };
+    ofVec2f speed;
+
+    float dtAux = offset;
+    //setup patron 3 - punts centrals
+    //setup patron 2 - punts centrals
+    for(int i=0; i<5; i++) {
+        pecaEmpty peca;
+        if(i%2){
+            speed.x = 0;
+            speed.y = 1;
+            g = midColArray[i];
+        }
+        else{
+            speed.x = 0;
+            speed.y = -1;
+            g = midColArray[i];
+        }
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,0,0,speed);
+        peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+        peca.estatPeca = CANVIA_ESTAT;
+        peca.estatPecaNext = APAREIX;
+        peca.bpecaActiva = false;
+        peca.idleTimer = IDLE_TIMER_PECA;
+        peca.tocadaTimer = TOCADA_TIMER_PECA;
+        peca.onBeatTimer = BEAT_TIMER_PECA;
+        peces.push_back(peca);
+    }
+    return dtAux + (6*BEAT_DIST_MS);
+}
+
+int ofApp::setupPatron6(int offset) {
+
+    int g = 40;
+    ofVec2f speed;
+    float dtAux = offset;
+    float rot = 0;
+    float angle = 0;
+
+    int swColArray[] = { 64 ,65, 66 };
+    int seColArray[] = { 68, 69, 70 };
+    int nwColArray[] = { 10, 11 ,12 };
+    int neColArray[] = { 14, 15, 16 };
+
+    for(int i=0; i<4; i++) {
+        pecaEmpty peca;
+        for(int j=0; j<3; j++){
+            switch(i){
+                case(0):
+                    speed.x = -1;
+                    speed.y = 0;
+                    angle = PI;
+                    rot = -0.005;
+                    g = nwColArray[j];
+                break;
+                case(1):
+                    speed.x = 1;
+                    speed.y = 0;
+                    angle = 0;
+                    rot = 0.005;
+                    g = neColArray[j];
+                break;
+                case(2):
+                    speed.x = -1;
+                    speed.y = 0;
+                    angle = PI;
+                    rot = 0.005;
+                    g = swColArray[j];
+                break;
+                case(3):
+                    speed.x = 0;
+                    speed.y = 1;
+                    angle = 0;
+                    rot = -0.005;
+                    g = seColArray[j];
+                break;
+            }
+            peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,angle,rot,speed);
+            peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+            peca.estatPeca = CANVIA_ESTAT;
+            peca.estatPecaNext = APAREIX;
+            peca.bpecaActiva = false;
+            peca.idleTimer = IDLE_TIMER_PECA+60;
+            peca.tocadaTimer = TOCADA_TIMER_PECA;
+            peca.onBeatTimer = BEAT_TIMER_PECA;
+            peca.speedBonus = 1.5;
+            peces.push_back(peca);
+        }
+    }
+    return offset+(10*BEAT_DIST_MS);
+}
+
+int ofApp::setupPatron7(int offset) {
+    int g = 40;
+    ofVec2f speed;
+    float dtAux = offset;
+    float rot = 0;
+    float angle = 0;
+
+    //int swColArray[] = { 64 ,65, 66 };
+    //int seColArray[] = { 68, 69, 70 };
+    int nwColArray[] = { 10, 11 ,12 };
+    int neColArray[] = { 14, 15, 16 };
+
+    for(int i=0; i<2; i++) {
+        pecaEmpty peca;
+        for(int j=0; j<3; j++){
+            switch(i){
+                case(0):
+                    speed.x = 0;
+                    speed.y = 1;
+                    angle = PI*0.25;
+                    rot = -0.0006;
+                    g = nwColArray[j];
+                break;
+                case(1):
+                    speed.x = 0;
+                    speed.y = 1;
+                    angle = PI*0.75;
+                    rot = 0.0006;
+                    g = neColArray[j];
+                break;
+            }
+            peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,angle,rot,speed);
+            peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+            peca.estatPeca = CANVIA_ESTAT;
+            peca.estatPecaNext = APAREIX;
+            peca.bpecaActiva = false;
+            peca.idleTimer = IDLE_TIMER_PECA+60;
+            peca.tocadaTimer = TOCADA_TIMER_PECA;
+            peca.onBeatTimer = BEAT_TIMER_PECA;
+            peca.speedBonus = 1.5;
+            peces.push_back(peca);
+        }
+    }
+    return offset+(10*BEAT_DIST_MS);
+}
+
+int ofApp::setupPatron8(int offset) {
+    int g = 40;
+    ofVec2f speed;
+    float dtAux = offset;
+    float rot = 0;
+    float angle = 0;
+
+    int starArray[] = { 30, 32, 48, 50 };
+    int crossArray[] = { 13, 37, 43, 67 };
+    int initStarSpeed[] = {-1,-1,1,-1,-1,1,1,1};
+    int initCrossSpeed[] = {0,1,1,0,-1,0,0,-1};
+
+    for(int i=0; i<2; i++) {
+        pecaEmpty peca;
+        for(int j=0; j<4; j++){
+            switch(i){
+                case(0):
+                    speed.x = initStarSpeed[j*2];
+                    speed.y = initStarSpeed[(j*2)+1];
+                    g = starArray[j];
+                break;
+                case(1):
+                    speed.x = initCrossSpeed[j*2];
+                    speed.y = initCrossSpeed[(j*2)+1];
+                    g = crossArray[j];
+                break;
+            }
+            peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,angle,rot,speed);
+            peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
+            peca.estatPeca = CANVIA_ESTAT;
+            peca.estatPecaNext = APAREIX;
+            peca.bpecaActiva = false;
+            peca.idleTimer = IDLE_TIMER_PECA+60;
+            peca.tocadaTimer = TOCADA_TIMER_PECA;
+            peca.onBeatTimer = BEAT_TIMER_PECA;
+            peca.speedBonus = 1.2;
+            peces.push_back(peca);
+        }
+    }
+    return offset+(10*BEAT_DIST_MS);
+}
+
+int ofApp::setupPatron9(int offset) {
+    int g = 0;
+    int k = 0;
+    int topColArray[] = { 10, 12, 14, 16 };
+    int rightColArray[] = { 16, 34, 52, 70 };
+    int botColArray[] = { 70, 68, 66, 64 };
+    int leftColArray[] = { 64, 46, 28, 10 };
+    ofVec2f speed;
+    float dtAux = offset;
+
+    //setup patron 9
+    for(int i=0; i<4; i++) {
+        pecaEmpty peca;
+        for(int j=0; j<4; j++){
+            switch(i){
+                case(0):
+                    speed.x = 0;
+                    speed.y = 1;
+                    k = topColArray[j];
+                break;
+                case(1):
+                    speed.x = -1;
+                    speed.y = 0;
+                    k = rightColArray[j];
+                break;
+                case(2):
+                    speed.x = 0;
+                    speed.y = -1;
+                    k = botColArray[j];
+                break;
+                case(3):
+                    speed.x = 1;
+                    speed.y = 0;
+                    k = leftColArray[j];
+                break;
+                dtAux+=0.25*BEAT_DIST_MS;
+            }
+            peca.setup(i,0,myGrid.returnPosicioOfPeca(0),34,dtAux,0,0,speed);
+            peca.init(comptadorPeces, k, myGrid.returnPosicioOfPeca(k));
+            peca.estatPeca = CANVIA_ESTAT;
+            peca.estatPecaNext = APAREIX;
+            peca.bpecaActiva = false;
+            peca.idleTimer = IDLE_TIMER_PECA;
+            peca.tocadaTimer = TOCADA_TIMER_PECA;
+            peca.onBeatTimer = BEAT_TIMER_PECA;
+            peca.speedBonus = 2.2;
+            peces.push_back(peca);
+            dtAux+=1*BEAT_DIST_MS;
+        }
+        dtAux += 2.7*BEAT_DIST_MS;
+    }
+    return dtAux;
+}
+
+void ofApp::setupPeces(){
+    int offsetAcc = FIRST_BEAT;
+    int trashOffs = 0;
+    offsetAcc = setupPatron1(offsetAcc);
+    offsetAcc = setupPatron2(offsetAcc);
+    offsetAcc = setupPatron3(offsetAcc);
+    offsetAcc = setupPatron4(offsetAcc);
+    offsetAcc = setupPatron5(offsetAcc);
+    offsetAcc = setupPatron6(offsetAcc);
+    offsetAcc = setupPatron7(offsetAcc);
+    offsetAcc = setupPatron4(offsetAcc);
+    offsetAcc = setupPatron5(offsetAcc);
+    offsetAcc = setupPatron2(offsetAcc);
+    offsetAcc = setupPatron8(offsetAcc);
+    offsetAcc = setupPatron9(offsetAcc);
+    offsetAcc = setupPatron9(offsetAcc);
+    offsetAcc = setupPatron6(offsetAcc);
+    offsetAcc = setupPatron8(offsetAcc);
+    offsetAcc = setupPatron8(offsetAcc);
+    offsetAcc = setupPatron7(offsetAcc);
+    cout<<offsetAcc<<endl;
 }
 
 void ofApp::setupTutorial1(){
@@ -706,9 +1133,13 @@ void ofApp::setupTutorial1(){
     int g = 0;
     float dtAux = 3;
     int offsetArray[] = {10, 25, 66, 52, 21, 40, 29, 47};
+    ofVec2f speed;
+    speed.x = 0;
+    speed.y = 0;
+
     for(int i=0; i<8; i++) {
         pecaEmpty peca;
-        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,0,0,speed);
         dtAux += 2;
         g = offsetArray[i];
         cout<<dtAux<<endl;
@@ -729,11 +1160,11 @@ void ofApp::setupTutorial2(){
     int offsetArray[] = {22, 30, 41, 32, 38, 20, 48, 40};
     for(int i=0; i<8; i++) {
         pecaEmpty peca;
-        float angle = ofRandom(-3.14,3.14);
+        float angle = ofRandom(-PI,PI);
         ofVec2f speed;
         speed.x = cos(angle);
         speed.y = sin(angle);
-        peca.setups(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,speed);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,0,0,speed);
         dtAux += 2;
         g = offsetArray[i];
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
@@ -751,9 +1182,13 @@ void ofApp::setupTutorial3(){
     int g = 0;
     float dtAux = 3;
     int offsetArray[] = {22, 30, 56, 32, 38, 20, 48};
+    ofVec2f speed;
+    speed.x = 0;
+    speed.y = 0;
+
     for(int i=0; i<7; i++) {
         pecaEmpty peca;
-        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,0,0,speed);
         dtAux += 3 + ofRandom(0.5,2);
         g = offsetArray[i];
         //cout<<dtAux<<endl;
@@ -769,7 +1204,7 @@ void ofApp::setupTutorial3(){
     g = 0;
     dtAux = 6;
     int offsetArray2[] = {12, 23, 40, 52, 21, 41, 50, 31};
-    ofVec2f speed;
+
     for(int i=0; i<sizeof(offsetArray2)/sizeof(offsetArray2[0]); i++) {
         pecaEmpty peca;
         switch(i)
@@ -808,7 +1243,7 @@ void ofApp::setupTutorial3(){
             break;
         }
 
-        peca.setups(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,speed);
+        peca.setup(i,0,myGrid.returnPosicioOfPeca(0),50,dtAux,0,0,speed);
         dtAux += 2 + ofRandom(0.5,2);
         g = offsetArray2[i];
         peca.init(comptadorPeces, g, myGrid.returnPosicioOfPeca(g));
@@ -822,10 +1257,12 @@ void ofApp::setupTutorial3(){
 }
 
 void ofApp::updatePeces(){
+    int timeElapsed = (MAX_GAME_TIME*1000) - jocMinutsTimer.getTimeLeftInMillis();
     pecaEmpty aux;
+    //ofVec2f angleVec;
     vector<pecaEmpty>::iterator it;
     for(it = peces.begin(); it != peces.end(); ) {
-        if(it->distanceInTime<=jocMinutsTimer.getTime()) {
+        if(it->distanceInTime<=timeElapsed) {
             aux = (*it);
             aux.bpecaActiva = true;
             pecesPantalla.push_back(aux);
@@ -837,12 +1274,22 @@ void ofApp::updatePeces(){
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
         it->update(totalBlobsDetected, posicionsBlobs, onBeat);
+        it->pecaPos = (it->pecaPos + (it->speedBonus*(it->speed)));
+        if(it->angle >= 2*PI) it->angle = 0;
+        if(it->rot!=0) {
+            it->angle += it->rot*PI;
+            it->speed.x = it->speed.x + cos(it->angle);
+            it->speed.y = it->speed.y + sin(it->angle);
+        }
+        it->speed.normalize();
+        //cout<<"x"<<it->speed.x<<endl;
+        //cout<<"y"<<it->speed.y<<endl;
+        cout<<"a"<<it->angle<<endl;
     }
-
 }
 
 bool ofApp::isOnBeat() {
-    int timeElapsed = (MAX_GAME_TIME*60*1000) - jocMinutsTimer.getTimeLeftInMillis();
+    int timeElapsed = (MAX_GAME_TIME*1000) - jocMinutsTimer.getTimeLeftInMillis();
     //cout << "songpeak: " << songPeaks.at(nextSongPeakIndex);
     //cout << " /  " << timeElapsed << endl;
 
@@ -854,8 +1301,7 @@ bool ofApp::isOnBeat() {
     return false;
 }
 
-void ofApp::updatePecesTut1()
-{
+void ofApp::updatePecesTut1(){
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
     for(it = pecesTut.begin(); it != pecesTut.end(); ) {
@@ -873,8 +1319,7 @@ void ofApp::updatePecesTut1()
     }
 }
 
-void ofApp::updatePecesTut2()
-{
+void ofApp::updatePecesTut2(){
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
     for(it = pecesMovTut.begin(); it != pecesMovTut.end(); ) {
@@ -889,13 +1334,11 @@ void ofApp::updatePecesTut2()
     for(it = pecesPantalla.begin(); it != pecesPantalla.end(); it++) {
         it->updatem(warpMousePos);
         it->update(totalBlobsDetected, posicionsBlobs, false);
-        //it->pecaPos = it->pecaPos.dot(it->speed);
         it->pecaPos = (it->pecaPos + (it->speed));
     }
 }
 
-void ofApp::updatePecesTut3()
-{
+void ofApp::updatePecesTut3(){
     pecaEmpty aux;
     vector<pecaEmpty>::iterator it;
     for(it = pecesTut.begin(); it != pecesTut.end(); ) {
@@ -1095,21 +1538,21 @@ void ofApp::drawSkipMessage(int tuto_phase){
     ofRectangle start;
     if(max_score_tutorial - current_score_tutorial == 0)
     {
-        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
+        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n             Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
         ofPushMatrix();
         ofTranslate(85 ,250);
         ofSetColor(saltingBlue);
-        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) +"\n\n\t       Congratulations!",0,0);
+        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) +"\n\n\n\n\t          Congratulations!",0,0);
         ofPopMatrix();
     }
 
     else
     {
-        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
+        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n             Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
         ofPushMatrix();
         ofTranslate(85 ,250);
         ofSetColor(saltingBlue);
-        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) + "\n\n\t      It could be better!",0,0);
+        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) + "\n\n\n\n\t         It could be better!",0,0);
         ofPopMatrix();
 
     }
@@ -1153,7 +1596,7 @@ void ofApp::drawReturn(){
 //--------------------------------------------------------------
 void ofApp::drawEnd(){
     int aux = NUM_PECES_TOTAL;
-    string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + "/" + ofToString(aux) + " POINTS";
+    string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + " POINTS";
     ofRectangle rs;
 	rs = saltingTypo.getStringBoundingBox(s,0,0);
 	ofPushMatrix();

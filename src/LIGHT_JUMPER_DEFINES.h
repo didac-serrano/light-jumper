@@ -14,15 +14,18 @@
 
 #define MAX_NUM_BLOBS                   10 // DETECCIÓ
 
-#define MAX_GAME_TIME                   0.5 // JOC
+#define MAX_GAME_TIME                   188 // JOC
 #define NUM_PANTALLES                   2
 #define NUM_PECES_MIN                   180
-#define NUM_PECES_TOTAL                 (MAX_GAME_TIME * NUM_PECES_MIN) - 10
+#define NUM_PECES_TOTAL                 ((MAX_GAME_TIME/60) * NUM_PECES_MIN) - 10
 
+#define BEAT_DIST_MS                    706
+#define FIRST_BEAT                      1235 - 10
 
 #define IDLE_TIMER_PECA                 240
 #define TOCADA_TIMER_PECA               30
-#define BEAT_TIMER_PECA                 140
+#define BEAT_TIMER_PECA                 120
+#define PI                              3.1416
 
 enum pantallesJoc{
     START,

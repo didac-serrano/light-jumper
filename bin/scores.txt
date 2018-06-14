@@ -1,12 +1,9 @@
 SCORES
 
-N - 7 Points
-N - 23 Points
-N - 231 Points
-N - 8 Points
-N - 53 Points
-N - 123 Points
-N - 79 Points
-N - 80 Points
-N - 51 Points
-N - 57 Points
+Andreas - 7 Points
+
+Xavi - 23 Points
+
+Didac - 231 Points
+
+Jordan - 8 PointsN - 35 Points

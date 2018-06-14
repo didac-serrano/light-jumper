@@ -2,24 +2,12 @@
 
 // the static event, or any static variable, must be initialized outside of the class definition.
 ofEvent<int> pecaEmpty::actualitzaPunts = ofEvent<int>();
-//ofEvent<int> pecaEmpty::actualitzaPunts_tut1 = ofEvent<int>();
 
 
-void pecaEmpty::setup(int _id, int _numgrid, ofVec2f _pos, int _radi, float _distT){
+void pecaEmpty::setup(int _id, int _numgrid, ofVec2f _pos, int _radi, float _distT, float _angle, float _rot, ofVec2f _speed){
     pecaBase::setup(_id, _numgrid, _pos, _radi);
     puntuacioPeca = 1;
-
-    // ESTAT
-    estatPeca = SETUP;
-    estatPecaNext = SETUP;
-    bdrawInfoHelp = false;
-    alfaPeca = 0;
-    distanceInTime = _distT;
-}
-
-void pecaEmpty::setups(int _id, int _numgrid, ofVec2f _pos, int _radi, float _distT, ofVec2f _speed){
-    pecaBase::setup(_id, _numgrid, _pos, _radi);
-    puntuacioPeca = 1;
+    speedBonus = 1;
 
     // ESTAT
     estatPeca = SETUP;
@@ -28,6 +16,8 @@ void pecaEmpty::setups(int _id, int _numgrid, ofVec2f _pos, int _radi, float _di
     alfaPeca = 0;
     distanceInTime = _distT;
     speed = _speed;
+    angle = _angle;
+    rot = _rot;
 }
 
 void pecaEmpty::init(int id, int numgrid, ofVec2f pos){

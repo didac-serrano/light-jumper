@@ -91,6 +91,16 @@ class ofApp : public ofBaseApp{
 
         //SETUPs
         void setupPeces();
+        int setupPatron1(int _offset);
+        int setupPatron2(int _offset);
+        int setupPatron3(int _offset);
+        int setupPatron4(int _offset);
+        int setupPatron5(int _offset);
+        int setupPatron6(int _offset);
+        int setupPatron7(int _offset);
+        int setupPatron8(int _offset);
+        int setupPatron9(int _offset);
+        int setupPatron10(int _offset);
         void setupTutorial1();
         void setupTutorial2();
         void setupTutorial3();

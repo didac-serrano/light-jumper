@@ -25,7 +25,9 @@
 #define BEAT_TIMER_PECA                 140
 
 enum pantallesJoc{
-    START,
+    
+    COVER,
+	START,
     SKIP_PHASE_TUTORIAL,
     PLAY,
     END,

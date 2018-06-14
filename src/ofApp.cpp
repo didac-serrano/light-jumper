@@ -2,7 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    startPlayer.loadMovie("doIwanna.mp4");
+    startPlayer.play();
     max_score_tutorial = 0;
     current_score_tutorial = 0;
     fons_inici.loadImage("start-background.png");
@@ -22,6 +23,8 @@ void ofApp::setup(){
     // MUSIC
     soundPlayer.loadSound("LipsAreMovin.mp3");
     setupMusic("lipsAreMovinLevel");
+
+
 
     // TEMPS DE JOC
 	jocMinutsTimer.setup(MAX_GAME_TIME*60*1000, false); // 3 minuts = 3*60*1000 ms
@@ -178,6 +181,10 @@ void ofApp::update(){
     else if(pantallaJoc == PLAY){
         updatePeces();
     }
+    else if(pantallaJoc == COVER){
+        startPlayer.update();
+    }
+
 
     else if(pantallaJoc == TUTORIAL_1){
         //HSCORES BUTTON
@@ -391,6 +398,10 @@ void ofApp::draw(){
         //peca1.draw();
         drawPeces();
         drawPuntuacio();
+    }
+    else if (pantallaJoc == COVER){
+        startPlayer.draw(0,0,800,800);
+
     }
 
     else if(pantallaJoc == END){

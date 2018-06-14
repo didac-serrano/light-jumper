@@ -153,6 +153,8 @@ class ofApp : public ofBaseApp{
         ofPoint puntsSrc[4]; // warp src
         ofPoint puntsDst[4]; // warp desti
 
+        ofVideoPlayer startPlayer;
+
         // contorns
         float tmpX, tmpY;
         ofVec4f tmpVecBlobPos;

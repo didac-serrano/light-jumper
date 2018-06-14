@@ -187,4 +187,7 @@ class ofApp : public ofBaseApp{
         int nextSongPeakIndex;
         void setupMusic(string filename);
         string gameLevel = "";
+
+        // IMAGE ASSETS
+        ofImage dancerJumping = ofImage();
 };

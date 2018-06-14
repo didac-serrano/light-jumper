@@ -2,7 +2,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    startPlayer.loadMovie("doIwanna.mp4");
+    startPlayer.loadMovie("asdf.mov");
+    startMusic.loadMovie("doIwanna.mp4");
     startPlayer.play();
     max_score_tutorial = 0;
     current_score_tutorial = 0;
@@ -156,6 +157,8 @@ void ofApp::update(){
         botoHighScores.updatem(warpMousePos);
 
         if(botoStart.botoSeleccionat == true){ // CANVI A pantallaJoc = PLAY;
+            startMusic.play();
+            startMusic.setVolume(0);
             pantallaJoc = PLAY;
             soundPlayer.play();
             jocMinutsTimer.startTimer();
@@ -181,10 +184,27 @@ void ofApp::update(){
     }
 
     else if(pantallaJoc == PLAY){
+        startMusic.update();
         updatePeces();
     }
     else if(pantallaJoc == COVER){
-        startPlayer.update();
+         startPlayer.update();
+
+        botoReturn.update(totalBlobsDetected, posicionsBlobs);
+        botoReturn.updatem(warpMousePos);
+         if (botoReturn.botoSeleccionat == true) {
+            pantallaJoc = START;
+            botoReturn.botoSeleccionat = false;
+            singleton->setPuntuacioJugador(0);
+            duradaTheEndTimer.reset();
+            duradaTheEndTimer.stopTimer();
+            shortTimer.reset();
+            shortTimer.stopTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
+            pecesTut.clear();
+            pecesPantalla.clear();
+            tuto_phase = 1;
     }
 
 
@@ -392,6 +412,7 @@ void ofApp::draw(){
 
     else if(pantallaJoc == PLAY){
         // FONS
+        startMusic.draw(0,0,800,800);
         ofSetColor(102, 102, 255);
         ofFill();
         ofRect(0,0, APP_WIDTH, APP_HEIGT);
@@ -402,6 +423,8 @@ void ofApp::draw(){
     }
     else if (pantallaJoc == COVER){
         startPlayer.draw(0,0,800,800);
+        botoReturn.draw(255,255,255, 0, 0);
+
 
     }
 

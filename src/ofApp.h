@@ -163,6 +163,8 @@ class ofApp : public ofBaseApp{
         ofPoint puntsSrc[4]; // warp src
         ofPoint puntsDst[4]; // warp desti
 
+        ofVideoPlayer startPlayer;
+
         // contorns
         float tmpX, tmpY;
         ofVec4f tmpVecBlobPos;
@@ -195,4 +197,7 @@ class ofApp : public ofBaseApp{
         int nextSongPeakIndex;
         void setupMusic(string filename);
         string gameLevel = "";
+
+        // IMAGE ASSETS
+        ofImage dancerJumping = ofImage();
 };

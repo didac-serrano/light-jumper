@@ -2,7 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-
+    startPlayer.loadMovie("asdf.mov");
+    startMusic.loadMovie("doIwanna.mp4");
+    startPlayer.play();
     max_score_tutorial = 0;
     current_score_tutorial = 0;
     fons_inici.loadImage("start-background.png");
@@ -23,6 +25,10 @@ void ofApp::setup(){
     soundPlayer.loadSound("DoIWannaKnow.mp3");
     setupMusic("levelDoIWannaKnow.txt");
 
+    // IMAGES
+    dancerJumping.loadImage("jumping-dancer.png");
+
+
     // TEMPS DE JOC
 	jocMinutsTimer.setup(MAX_GAME_TIME*1000, false); // 3 minuts = 3*60*1000 ms
     jocMinutsTimer.stopTimer();
@@ -35,7 +41,7 @@ void ofApp::setup(){
     shortTimer.stopTimer();
 
     // WARPER
-    warper.setup(0,0,APP_WIDTH,APP_HEIGT);
+    warper.setup(0, 0, APP_WIDTH,APP_HEIGT);
     warper.load("LightJumper_CornerPin.xml");
     warper.enableKeys(true);
 
@@ -45,11 +51,11 @@ void ofApp::setup(){
     punterHeightMig = punter.getHeight()*0.5;
 
     // COLOR JOC
-    saltingBlue = ofColor(255,255,255);
+    saltingBlue = ofColor(255, 255, 255);
 
     // TYPO
 	saltingTypo.loadFont("Verdana.ttf", 25, true, true);
-	saltingTypo.setLineHeight(14.0f);
+	saltingTypo.setLineHeight(25.0f);
 	saltingTypo.setLetterSpacing(1.037);
 
     // PECES
@@ -57,11 +63,11 @@ void ofApp::setup(){
     ofAddListener(pecaEmpty::actualitzaPunts, this, &ofApp::actualitzaPuntsEmpty);
 
     //Setup
-    botoStart.setup(botoStart.botoX, botoStart.botoY, 75, ofColor(204, 204, 0));
-    botoHighScores.setup(botoHighScores.botoX, botoHighScores.botoY, 60, ofColor(204, 204, 0));
-    botoInstructions.setup(botoInstructions.botoX, botoInstructions.botoY, 60, ofColor(204, 204, 0));
-    botoBack.setup(botoBack.botoX, botoBack.botoY, 55, ofColor(204, 204, 0));
-    botoReturn.setup(botoReturn.botoX, botoReturn.botoY, 30, ofColor(204, 204, 0));
+    botoStart.setup(botoStart.botoX, botoStart.botoY, 75, ofColor(255, 255, 255));
+    botoHighScores.setup(botoHighScores.botoX, botoHighScores.botoY, 60, ofColor(255, 255, 255));
+    botoInstructions.setup(botoInstructions.botoX, botoInstructions.botoY, 60, ofColor(255, 255, 255));
+    botoBack.setup(botoBack.botoX, botoBack.botoY, 55, ofColor(255, 255, 255));
+    botoReturn.setup(botoReturn.botoX, botoReturn.botoY, 30, ofColor(255, 255, 255));
 
     // DEBUG
     setupDebugGUI();
@@ -151,6 +157,8 @@ void ofApp::update(){
         botoHighScores.updatem(warpMousePos);
 
         if(botoStart.botoSeleccionat == true){ // CANVI A pantallaJoc = PLAY;
+            startMusic.play();
+            startMusic.setVolume(0);
             pantallaJoc = PLAY;
             soundPlayer.play();
             jocMinutsTimer.startTimer();
@@ -176,11 +184,32 @@ void ofApp::update(){
     }
 
     else if(pantallaJoc == PLAY){
+        startMusic.update();
         updatePeces();
     }
+    else if(pantallaJoc == COVER){
+         startPlayer.update();
 
-    else if(pantallaJoc == TUTORIAL_1){
-        //HSCORES BUTTON
+        botoReturn.update(totalBlobsDetected, posicionsBlobs);
+        botoReturn.updatem(warpMousePos);
+         if (botoReturn.botoSeleccionat == true) {
+            pantallaJoc = START;
+            botoReturn.botoSeleccionat = false;
+            singleton->setPuntuacioJugador(0);
+            duradaTheEndTimer.reset();
+            duradaTheEndTimer.stopTimer();
+            shortTimer.reset();
+            shortTimer.stopTimer();
+            tutoTimer.reset();
+            tutoTimer.stopTimer();
+            pecesTut.clear();
+            pecesPantalla.clear();
+            tuto_phase = 1;
+    }
+
+
+    else if (pantallaJoc == TUTORIAL_1){
+        // HSCORES BUTTON
         updatePecesTut1();
         botoReturn.update(totalBlobsDetected, posicionsBlobs);
         botoReturn.updatem(warpMousePos);
@@ -190,7 +219,7 @@ void ofApp::update(){
             tutoTimer.reset();
             tutoTimer.stopTimer();
         }
-        if(shortTimer.isTimerFinished()){
+        if (shortTimer.isTimerFinished()){
              pantallaJoc = SKIP_PHASE_TUTORIAL;
              pecesTut.clear();
              setupTutorial2();
@@ -199,8 +228,7 @@ void ofApp::update(){
              singleton->setPuntuacioJugador(0);
              //FER SETUP SEGUENT FASE
         }
-        if (botoReturn.botoSeleccionat == true)
-        {
+        if (botoReturn.botoSeleccionat == true) {
             pantallaJoc = START;
             botoReturn.botoSeleccionat = false;
             singleton->setPuntuacioJugador(0);
@@ -216,7 +244,7 @@ void ofApp::update(){
         }
     }
 
-    else if(pantallaJoc == TUTORIAL_2){
+    else if (pantallaJoc == TUTORIAL_2){
         //HSCORES BUTTON
         updatePecesTut2();
         botoReturn.update(totalBlobsDetected, posicionsBlobs);
@@ -227,7 +255,7 @@ void ofApp::update(){
             tutoTimer.reset();
             tutoTimer.stopTimer();
         }
-        if(shortTimer.isTimerFinished()){
+        if (shortTimer.isTimerFinished()){
              setupTutorial3();
              pantallaJoc = SKIP_PHASE_TUTORIAL;
              shortTimer.reset();
@@ -334,7 +362,7 @@ void ofApp::update(){
         }
     }
 
-    else if(pantallaJoc == HIGH_SCORES){
+    else if (pantallaJoc == HIGH_SCORES) {
         //HSCORES BUTTON
         botoBack.update(totalBlobsDetected, posicionsBlobs);
         botoBack.updatem(warpMousePos);
@@ -377,20 +405,28 @@ void ofApp::draw(){
         drawStart();
         drawHighScores();
         drawInstructions();
-        botoStart.draw(153, 115, 0, 0, 0);
-        botoInstructions.draw(153, 115, 0, 0, 0);
-        botoHighScores.draw(153, 115, 0, 0, 0);
+        botoStart.draw(255, 255, 255, 0, 0);
+        botoInstructions.draw(255, 255, 255, 0, 0);
+        botoHighScores.draw(255, 255, 255, 0, 0);
     }
 
     else if(pantallaJoc == PLAY){
         // FONS
         ofSetColor(0,0,0);
+        // startMusic.draw(0,0,800,800);
+        // ofSetColor(102, 102, 255);
         ofFill();
         ofRect(0,0, APP_WIDTH, APP_HEIGT);
         drawTemps();
         //peca1.draw();
         drawPeces();
         drawPuntuacio();
+    }
+    else if (pantallaJoc == COVER){
+        startPlayer.draw(0,0,800,800);
+        botoReturn.draw(255,255,255, 0, 0);
+
+
     }
 
     else if(pantallaJoc == END){
@@ -1449,7 +1485,7 @@ void ofApp::drawTemps(){
     else{
         ofSetColor(255); // temps en blanc
     }
-    saltingTypo.drawString(s,0,0);
+    saltingTypo.drawString(s, 0, 0);
     ofPopMatrix();
 }
 
@@ -1466,25 +1502,17 @@ void ofApp::drawPuntuacio(){
 }
 
 void ofApp::drawStart(){
-    string strt = "Start!";
-    ofRectangle start;
-    start = saltingTypo.getStringBoundingBox(strt,0,0);
-    ofPushMatrix();
-    ofTranslate(APP_WIDTH_MEITAT-start.width*0.5 + 10,370);
+    string text = "START";
     ofSetColor(saltingBlue);
-    saltingTypo.drawString(strt,0,0);
-    ofPopMatrix();
+    saltingTypo.drawString(text,
+                           APP_WIDTH_MEITAT - saltingTypo.stringWidth(text)/2,
+                           APP_HEIGT_MEITAT + 30);
 }
 
 void ofApp::drawScoreList(){
-    ofRectangle start;
-    start = saltingTypo.getStringBoundingBox(all_scores,0,0);
-    ofPushMatrix();
-    ofTranslate(APP_WIDTH_MEITAT-start.width*0.5 + 10,60);
-    ofSetColor(ofColor(115, 38, 115));
-
-    saltingTypo.drawString(all_scores,0,0);
-    ofPopMatrix();
+    saltingTypo.drawString(all_scores,
+                           APP_WIDTH_MEITAT - saltingTypo.stringWidth(all_scores)/2,
+                           60);
 }
 
 void ofApp::drawBack(){
@@ -1536,31 +1564,27 @@ void ofApp::drawTutMsg(){
 
 void ofApp::drawSkipMessage(int tuto_phase){
     ofRectangle start;
-    if(max_score_tutorial - current_score_tutorial == 0)
-    {
-        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n             Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
+    if(max_score_tutorial == current_score_tutorial) {
+
+        start = saltingTypo.getStringBoundingBox("You successfully completed stage " + ofToString(tuto_phase) +
+                                                 "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
         ofPushMatrix();
         ofTranslate(85 ,250);
         ofSetColor(saltingBlue);
-        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) +"\n\n\n\n\t          Congratulations!",0,0);
+        saltingTypo.drawString("You successfully completed stage " + ofToString(tuto_phase) +
+                               "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) +"\n\n\t       Congratulations!",0,0);
         ofPopMatrix();
-    }
-
-    else
-    {
-        start = saltingTypo.getStringBoundingBox("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n             Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
+    } else {
+        start = saltingTypo.getStringBoundingBox("You successfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial),0,0);
         ofPushMatrix();
         ofTranslate(85 ,250);
         ofSetColor(saltingBlue);
-        saltingTypo.drawString("You succesfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) + "\n\n\n\n\t         It could be better!",0,0);
+        saltingTypo.drawString("You successfully completed stage " + ofToString(tuto_phase) + "!\n\n              Errors: " + ofToString(max_score_tutorial - current_score_tutorial) + "\n\n\t      It could be better!",0,0);
         ofPopMatrix();
-
     }
-
-
 }
 
-void ofApp::drawInstructions(){
+void ofApp::drawInstructions() {
     string instr = "Tutorial";
     ofRectangle instructions;
     instructions = saltingTypo.getStringBoundingBox(instr,0,0);
@@ -1596,14 +1620,14 @@ void ofApp::drawReturn(){
 //--------------------------------------------------------------
 void ofApp::drawEnd(){
     int aux = NUM_PECES_TOTAL;
-    string s = "GREAT JOB!! " + ofToString(singleton->getPuntuacioJugador()) + " POINTS";
-    ofRectangle rs;
-	rs = saltingTypo.getStringBoundingBox(s,0,0);
-	ofPushMatrix();
-    ofTranslate(APP_WIDTH_MEITAT-rs.width*0.5,APP_HEIGT_MEITAT-rs.height*0.5);
-    ofSetColor(255);
-    saltingTypo.drawString(s,0,0);
-    ofPopMatrix();
+    dancerJumping.width = (APP_WIDTH_MEITAT / 2);
+    fons_inici.draw(0, 0, APP_WIDTH, APP_HEIGT);
+    dancerJumping.draw(APP_WIDTH_MEITAT - dancerJumping.width/2,
+                       APP_HEIGT_MEITAT - dancerJumping.height - 30);
+    string text = "YOU ROCK!! " + ofToString(singleton->getPuntuacioJugador()) + "/" + ofToString(aux) + " POINTS";
+    saltingTypo.drawString(text,
+                           APP_WIDTH_MEITAT - saltingTypo.stringWidth(text)/2,
+                           APP_HEIGT_MEITAT + 50);
 }
 
 void ofApp::setupCamera() {

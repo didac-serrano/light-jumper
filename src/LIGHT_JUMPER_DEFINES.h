@@ -28,7 +28,9 @@
 #define PI                              3.1416
 
 enum pantallesJoc{
-    START,
+    
+    COVER,
+	START,
     SKIP_PHASE_TUTORIAL,
     PLAY,
     END,
